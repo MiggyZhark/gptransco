@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "758811365427",
+    "project_id": "gptransco-254ab",
+    "storage_bucket": "gptransco-254ab.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:758811365427:android:235cd81bec0c3427f1d346",
+        "android_client_info": {
+          "package_name": "com.example.gptransco"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCenoWq3ytwpJuu73b3fKokXFYoszUYU9Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
