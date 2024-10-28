@@ -19,32 +19,32 @@ class HomeCardSlider extends StatefulWidget {
 
 class _HomeCardSliderState extends State<HomeCardSlider> {
   List<CardItem> items = [
-    CardItem(
+    const CardItem(
       urlImage: 'https://thumbs.dreamstime.com/b/pasay-ph-may-toyota-hiace-van-group-philippines-car-meet-event-held-282460592.jpg',
       title: 'Driver 1',
       subtitle: '₱500',
     ),
-    CardItem(
+    const CardItem(
       urlImage: 'https://i0.wp.com/realbreezedavaotours.com/wp-content/uploads/2023/09/IMG_20230715_145538.jpg?ssl=1',
       title: 'Driver 2',
       subtitle: '₱700',
     ),
-    CardItem(
+    const CardItem(
       urlImage: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR6OQe1sTbR8vigzhfOJMVXE8Fsg0a903VBVpkrBUZyCcAIK1U2VR8NC_oYE3idfQjClMw&usqp=CAU',
       title: 'Driver 3',
       subtitle: '₱750',
     ),
-    CardItem(
+    const CardItem(
       urlImage: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQM_LGfQzgklVV41GRJtw5nH6ZUARrPJGOhxFUOAtPIxKhZQb0m4hFJ0hjbnQv7o7nVsn0&usqp=CAU',
       title: 'Driver 4',
       subtitle: '₱800',
     ),
-    CardItem(
+    const CardItem(
       urlImage: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRsiABvx4X9TJP-fU2RzeW-OJh0f4EWFhGQxT5cvK_GOVqMWJ0gIWDd7mKKpQquOlnyLHs&usqp=CAU',
       title: 'Driver 5',
       subtitle: '₱750',
     ),
-    CardItem(
+    const CardItem(
       urlImage: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRtYtnlZNDvUucaL0sR4i0n6sUi6Zdu7KKcg9TU3WGS3SoE8FbO0gCixAG7ydJWVq-o6rw&usqp=CAU',
       title: 'Driver 6',
       subtitle: '₱800',
@@ -53,13 +53,13 @@ class _HomeCardSliderState extends State<HomeCardSlider> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: 165,
       child: ListView.separated(
-        padding: EdgeInsets.only(top: 16,left: 16,right: 16),
+        padding: const EdgeInsets.only(top: 16,left: 16,right: 16),
         itemCount: 6,
         scrollDirection: Axis.horizontal,
-        separatorBuilder: (context, _) => SizedBox(
+        separatorBuilder: (context, _) => const SizedBox(
           width: 8,
         ),
         itemBuilder: (context, index) => buildCard(item: items[index]),
@@ -70,7 +70,7 @@ class _HomeCardSliderState extends State<HomeCardSlider> {
   Widget buildCard({
     required CardItem item,
   }) =>
-      Container(
+      SizedBox(
           width: 160,
           child: Column(
             children: [
@@ -88,10 +88,10 @@ class _HomeCardSliderState extends State<HomeCardSlider> {
                               ),
                             ),
                           )))),
-              SizedBox(
+              const SizedBox(
                 height: 4,
               ),
-              Text(item.title,style: TextStyle(fontWeight: FontWeight.bold),),
+              Text(item.title,style: const TextStyle(fontWeight: FontWeight.bold),),
               Text(item.subtitle)
             ],
           ));

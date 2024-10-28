@@ -3,15 +3,17 @@ import 'package:flutter/services.dart';
 import '../../../../constants.dart';
 import '../components/homecard_slider.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   final Map<String, dynamic> userProfileData;
   const HomeScreen({super.key,required this.userProfileData});
 
   @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-      statusBarColor: Colors.teal, // Status bar color
-    ));
     return SafeArea(
       child: Scaffold(appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -22,9 +24,10 @@ class HomeScreen extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  CircleAvatar(
-                    backgroundColor: Colors.white,
-                    child: Image.asset('assets/images/profile-user.png'),
+                  CircleAvatar(backgroundColor: Colors.white,
+                    backgroundImage: widget.userProfileData['profileImageUrl'].startsWith('http')
+                        ? NetworkImage(widget.userProfileData['profileImageUrl'])
+                        : AssetImage(widget.userProfileData['profileImageUrl']) as ImageProvider,
                   ),
                   const SizedBox(
                     width: 15,
@@ -32,22 +35,22 @@ class HomeScreen extends StatelessWidget {
                   RichText(
                     textAlign: TextAlign.justify,
                     text: TextSpan(
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: Colors.black, // Use gpSecondaryColor if it's defined elsewhere
                         fontSize: 18,
                       ),
                       children: <TextSpan>[
-                        TextSpan(
+                        const TextSpan(
                           text: 'Hi, ',
-                          style: const TextStyle(fontSize: 14), // Apply `textHeaderStyle` if defined
+                          style: TextStyle(fontSize: 14), // Apply `textHeaderStyle` if defined
                         ),
                         TextSpan(
-                          text: userProfileData['name'] ?? 'N/A',
+                          text: widget.userProfileData['name'] ?? 'N/A',
                           style: const TextStyle(fontSize: 14),
                         ),
-                        TextSpan(
+                        const TextSpan(
                           text: '\nWelcome!',
-                          style: const TextStyle(fontSize: 14),
+                          style: TextStyle(fontSize: 14),
                         ),
                       ],
                     ),
@@ -58,13 +61,10 @@ class HomeScreen extends StatelessWidget {
                 onPressed: () {
                   // Handle notification press
                 },
-                icon: const CircleAvatar(
-                  backgroundColor: Colors.grey,
-                  child: Icon(
-                    Icons.notifications,
-                    color: Colors.black87,
-                    size: 28,
-                  ),
+                icon: const Icon(
+                  Icons.notifications,
+                  color: Colors.black87,
+                  size: 28,
                 ),
               )
             ],
@@ -72,7 +72,7 @@ class HomeScreen extends StatelessWidget {
         ),
       ),
         body: Padding(
-          padding: const EdgeInsets.only(left: 16,right: 16,bottom: 16),
+          padding: const EdgeInsets.only(left: 16,right: 16,bottom: 16,top: 10),
           child: SingleChildScrollView(
             child: Column(
               children: [
@@ -173,12 +173,12 @@ class HomeScreen extends StatelessWidget {
                     ],
                   ),
                 ),
-                Row(
+                const Row(
                   children: [
                     Padding(
                         padding: EdgeInsets.only(top: 20, left: 20, right: 20),
                         child: Text(
-                          'Available Booking',
+                          'Available Rentals',
                           style: TextStyle(fontWeight: FontWeight.bold),
                         )),
                   ],
@@ -189,7 +189,8 @@ class HomeScreen extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 10),
                       child:
-                          TextButton(onPressed: () {}, child: Text('See All')),
+                          TextButton(onPressed: () {
+                          }, child: const Text('More Info')),
                     ),
                   ],
                 ),

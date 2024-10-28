@@ -1,11 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:gptransco/Screens/Login/login_screen.dart';
+import 'package:flutter/services.dart';
 import 'package:gptransco/Screens/Welcome/Onboarding_slider.dart';
 import 'package:gptransco/Screens/Dashboards/Driver_Dashboard.dart';
 import '../Screens/Dashboards/Users/User_Dashboard.dart';
-import '../Screens/Signup/components/authentication_screen.dart';
+import '../constants.dart';
 
 class Authentication extends StatelessWidget {
   const Authentication({super.key});
@@ -20,6 +20,12 @@ class Authentication extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        statusBarColor: gpSecondaryColor,
+        statusBarIconBrightness: Brightness.light,  // Adjust based on design
+      ),
+    );
     return Scaffold(
       body: StreamBuilder<User?>(
         stream: FirebaseAuth.instance.authStateChanges(),

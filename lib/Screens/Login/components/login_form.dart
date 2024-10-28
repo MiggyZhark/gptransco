@@ -2,6 +2,8 @@ import 'package:animate_do/animate_do.dart';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:gptransco/Screens/Dashboards/Users/User_Dashboard.dart';
 import '../../../Services/auth_service.dart';
 import '../../../Services/error_handling.dart';
 import '../../../constants.dart';
@@ -84,7 +86,13 @@ class _LoginFormState extends State<LoginForm> {
       } else {
         hideLoadingDialog(context);
         // Navigate to user dashboard
-        Navigator.pushReplacementNamed(context, '/userdashboard');
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+                builder: (context) => const UserDashboard()
+            ),
+            ModalRoute.withName("/userDashboard")
+        );
       }
     } else {
       hideLoadingDialog(context);

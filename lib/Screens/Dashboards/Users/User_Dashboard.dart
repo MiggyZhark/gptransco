@@ -6,7 +6,7 @@ import 'Screens/booking.dart';
 import 'Screens/home.dart';
 import 'Screens/profile.dart';
 import 'Screens/rental.dart';
-import 'Screens/shipping.dart';
+import 'Screens/Shipping_screen/shipping.dart';
 
 class UserDashboard extends StatefulWidget {
   const UserDashboard({super.key});
@@ -64,52 +64,54 @@ class _UserDashboardState extends State<UserDashboard> {
     // Home screen for the FAB with userProfileData
     final Widget homeScreen = HomeScreen(userProfileData: userProfileData!);
 
-    return Scaffold(
-      body: _currentIndex == -1 ? homeScreen : _screens[_currentIndex], // Show home screen or selected tab
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          setState(() {
-            _currentIndex = -1; // Set to -1 to represent the Home screen
-          });
-        },
-        backgroundColor: Colors.black87,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-        child: Icon(
-          Icons.home,
-          size: 30,
-          color: _currentIndex == -1 ? Colors.greenAccent : Colors.white,
+    return SafeArea(
+      child: Scaffold(
+        body: _currentIndex == -1 ? homeScreen : _screens[_currentIndex], // Show home screen or selected tab
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            setState(() {
+              _currentIndex = -1; // Set to -1 to represent the Home screen
+            });
+          },
+          backgroundColor: Colors.black87,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+          child: Icon(
+            Icons.home,
+            size: 30,
+            color: _currentIndex == -1 ? Colors.greenAccent : Colors.white,
+          ),
         ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: AnimatedBottomNavigationBar(
-        activeColor: Colors.greenAccent,
-        inactiveColor: Colors.white,
-        backgroundColor: Colors.black87,
-        icons: iconList,
-        activeIndex: _currentIndex == -1 ? -1 : _currentIndex, // Ensure FAB is treated separately
-        gapLocation: GapLocation.center,
-        notchSmoothness: NotchSmoothness.softEdge,
-        onTap: (index) {
-          setState(() {
-            if (index == 3) { // If the profile tab is tapped
-              if (userProfileData != null) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ProfileScreen(userProfileData: userProfileData!), // Pass user data to ProfileScreen
-                  ),
-                );
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        bottomNavigationBar: AnimatedBottomNavigationBar(
+          activeColor: Colors.greenAccent,
+          inactiveColor: Colors.white,
+          backgroundColor: Colors.black87,
+          icons: iconList,
+          activeIndex: _currentIndex == -1 ? -1 : _currentIndex, // Ensure FAB is treated separately
+          gapLocation: GapLocation.center,
+          notchSmoothness: NotchSmoothness.softEdge,
+          onTap: (index) {
+            setState(() {
+              if (index == 3) { // If the profile tab is tapped
+                if (userProfileData != null) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ProfileScreen(userProfileData: userProfileData!), // Pass user data to ProfileScreen
+                    ),
+                  );
+                } else {
+                  // Handle loading state or error if data is not available
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Profile data is still loading.')),
+                  );
+                }
               } else {
-                // Handle loading state or error if data is not available
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Profile data is still loading.')),
-                );
+                _currentIndex = index; // Update the index based on tab selection, except for Profile
               }
-            } else {
-              _currentIndex = index; // Update the index based on tab selection, except for Profile
-            }
-          });
-        },
+            });
+          },
+        ),
       ),
     );
   }

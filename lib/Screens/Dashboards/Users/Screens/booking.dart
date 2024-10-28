@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gptransco/Screens/Dashboards/Users/chats/chathub.dart';
 import '../../../../constants.dart';
 
 class BookingsScreen extends StatelessWidget {
@@ -11,7 +12,7 @@ class BookingsScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         centerTitle: true,
-        title: Text(
+        title: const Text(
           'Booking',
           style: headerTitle,
         ),
@@ -51,7 +52,7 @@ class BookingsScreen extends StatelessWidget {
                     // Chat Icon button
                     ElevatedButton(
                       onPressed: () {
-                        Navigator.pushNamed(context, "/ChatHub");
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=> const ChatHub()));
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.teal[600],
@@ -64,7 +65,6 @@ class BookingsScreen extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 10),
-
                 // Second row: Sort button and Pending button
                 Row(
                   children: [
@@ -90,14 +90,14 @@ class BookingsScreen extends StatelessWidget {
                       onPressed: () {
                         // Pending action here
                       },
-                      child: const Text('Pendings',
-                          style: TextStyle(color: Colors.white)),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.teal[600], // Adjust color
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(15),
                         ),
                       ),
+                      child: const Text('Pendings',
+                          style: TextStyle(color: Colors.white)),
                     ),
                   ],
                 ),
@@ -112,7 +112,7 @@ class BookingsScreen extends StatelessWidget {
                 borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(45),
                     topRight: Radius.circular(45))),
-            child: SingleChildScrollView(
+            child: const SingleChildScrollView(
               child: Column(
                 children: [
                   SizedBox(

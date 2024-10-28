@@ -1,7 +1,10 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:gptransco/Services/auth_service.dart';
 import '../../../../Services/Authentication.dart';
 import '../../../../constants.dart';
+import '../Services.dart';
 import '../components/profiletextbox.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -14,9 +17,47 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   final _auth = AuthService();
+  bool isLoading = false;
+  final ImageService _imageService = ImageService(); // Initialize ImageService
+
+  Future<void> _changeProfileImage() async {
+    setState(() {
+      isLoading = true; // Show loading indicator
+    });
+
+    // Step 1: Pick an image
+    File? imageFile = await _imageService.pickImage();
+    if (imageFile == null) {
+      setState(() {
+        isLoading = false; // Hide loading indicator if no image is picked
+      });
+      return; // Exit the function if no image was picked
+    }
+
+    // Step 2: Upload the image to Firebase Storage and get the download URL
+    String? downloadUrl = await _imageService.uploadImageToStorage(imageFile);
+    if (downloadUrl != null) {
+      // Step 3: Save the new image URL to Firestore
+      await _imageService.saveImageUrlToFirestore(downloadUrl);
+
+      setState(() {
+        widget.userProfileData['profileImageUrl'] = downloadUrl; // Update local state
+      });
+    }
+
+    setState(() {
+      isLoading = false; // Hide loading indicator after upload
+    });
+  }
 
   void logoutNavigate(){
     hideLoadingDialog(context);
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        statusBarColor: gpSecondaryColor,
+        statusBarIconBrightness: Brightness.light,  // Adjust based on design
+      ),
+    );
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(builder: (context) => const Authentication()),
@@ -36,7 +77,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: Scaffold(
         resizeToAvoidBottomInset: true,
         backgroundColor: gpBottomNavigationColor,
-        appBar: AppBar(
+        appBar: AppBar(iconTheme: const IconThemeData(color: gpPrimaryColor),
           actions: [
             IconButton(
                 onPressed: () {},
@@ -57,16 +98,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
         body: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset(
-              'assets/images/profile-user.png',
-              height: 100,
-              width: 100,
+            CircleAvatar(backgroundColor: Colors.white,
+              radius: 55,
+              backgroundImage: widget.userProfileData['profileImageUrl'].startsWith('http')
+                  ? NetworkImage(widget.userProfileData['profileImageUrl'])
+                  : AssetImage(widget.userProfileData['profileImageUrl']) as ImageProvider,
             ),
             const SizedBox(
-              height: 10,
+              height: 5,
             ),
             TextButton(
-              onPressed: () {},
+              onPressed: _changeProfileImage,
               child: const Text(
                 'Change Profile',
                 style: TextStyle(
@@ -76,7 +118,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ),
             const SizedBox(
-              height: 20,
+              height: 10,
             ),
             Expanded(
                 child: Container(
@@ -124,7 +166,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     side: const BorderSide(
                                         color: gpBottomNavigationColor),
                                     borderRadius: BorderRadius.circular(10))),
-                            onPressed: () {},
+                            onPressed: () {
+                              showModalBottomSheet(
+                                isScrollControlled: true,
+                                context: context,
+                                builder: (context) {
+                                  return const UpdatePassword();  // Show the UpdatePassword widget
+                                },
+                              );
+                            },
                             child: const Text(
                               'Change Password',
                               style: TextStyle(

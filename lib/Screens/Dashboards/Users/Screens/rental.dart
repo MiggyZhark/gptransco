@@ -12,7 +12,7 @@ class RentalScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         centerTitle: true,
-        title: Text(
+        title: const Text(
           'Rentals',
           style: headerTitle,
         ),
@@ -91,14 +91,14 @@ class RentalScreen extends StatelessWidget {
                       onPressed: () {
                         // Pending action here
                       },
-                      child: const Text('Pendings',
-                          style: TextStyle(color: Colors.white)),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.teal[600], // Adjust color
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(15),
                         ),
                       ),
+                      child: const Text('Pendings',
+                          style: TextStyle(color: Colors.white)),
                     ),
                   ],
                 ),
@@ -113,7 +113,7 @@ class RentalScreen extends StatelessWidget {
                 borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(45),
                     topRight: Radius.circular(45))),
-            child: SingleChildScrollView(
+            child: const SingleChildScrollView(
               child: Column(
                 children: [
                   SizedBox(height: 10,),

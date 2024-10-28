@@ -1,38 +1,93 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 
-import '../../../../constants.dart';
+class ShippingImage extends StatefulWidget {
+  final Function(File?) onImageSelected;
 
-class ShippingImage extends StatelessWidget {
-  const ShippingImage({super.key});
+  const ShippingImage({super.key, required this.onImageSelected});
+
+  @override
+  _ShippingImageState createState() => _ShippingImageState();
+}
+
+class _ShippingImageState extends State<ShippingImage> {
+  File? _selectedImage;
+  final ImagePicker _picker = ImagePicker();
+
+  Future<void> _pickImage() async {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Select Image Source"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: const Icon(Icons.photo_library),
+                title: const Text("Gallery"),
+                onTap: () {
+                  Navigator.pop(context);
+                  _getImageFromGallery();
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.camera_alt),
+                title: const Text("Camera"),
+                onTap: () {
+                  Navigator.pop(context);
+                  _getImageFromCamera();
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _getImageFromGallery() async {
+    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+
+    if (image != null) {
+      setState(() {
+        _selectedImage = File(image.path);
+        widget.onImageSelected(_selectedImage); // Pass the selected image file
+      });
+    }
+  }
+
+  Future<void> _getImageFromCamera() async {
+    final XFile? image = await _picker.pickImage(source: ImageSource.camera);
+
+    if (image != null) {
+      setState(() {
+        _selectedImage = File(image.path);
+        widget.onImageSelected(_selectedImage); // Pass the selected image file
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Padding(padding:EdgeInsets.only(bottom: 15,left: 15,right: 15),
-      child: Container(
-        height: MediaQuery.sizeOf(context).height / 3.7, // Adjust height and width to your needs
-        width: double.infinity,
-        decoration: BoxDecoration(
-          color: gpPrimaryColor, // Placeholder color
-          borderRadius: BorderRadius.circular(15),
-          border: Border.all(color: Colors.grey),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.add_a_photo,
-              size: 40,
-              color: Colors.grey[700], // Icon color
-            ),
-            const SizedBox(height: 10),
-            Text(
-              'Add Image',
-              style: TextStyle(
-                color: Colors.grey[700],
-                fontSize: 16,
-              ),
-            ),
-          ],
+    return GestureDetector(
+      onTap: _pickImage,
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 20, left: 20, right: 20),
+        child: Container(
+          height: 200,
+          width: double.infinity,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            color: Colors.grey.shade200,
+            image: _selectedImage != null
+                ? DecorationImage(image: FileImage(_selectedImage!), fit: BoxFit.cover)
+                : null,
+          ),
+          child: _selectedImage == null
+              ? const Icon(Icons.add_a_photo, size: 50, color: Colors.grey)
+              : null,
         ),
       ),
     );

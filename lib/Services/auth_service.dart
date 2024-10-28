@@ -88,6 +88,7 @@ class AuthService {
     }
   }
 
+
   // Reset password
   Future<User?> sendPasswordResetEmail(String email) async {
     try {
@@ -117,4 +118,27 @@ class AuthService {
     }
   }
 
+  // Change password by re-authenticating the user first
+  Future<void> changePassword(String oldPassword, String newPassword) async {
+    try {
+      User? user = _auth.currentUser;
+
+      if (user != null) {
+        // Re-authenticate the user using their current password
+        final AuthCredential credential = EmailAuthProvider.credential(
+          email: user.email!,
+          password: oldPassword,
+        );
+        await user.reauthenticateWithCredential(credential);
+
+        // Once re-authenticated, update the password
+        await user.updatePassword(newPassword);
+        print('Password changed successfully');
+      }
+    } catch (e) {
+      log('Error changing password: $e');
+      rethrow;
+    }
+  }
 }
+

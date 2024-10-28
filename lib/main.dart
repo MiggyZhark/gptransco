@@ -1,20 +1,22 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:gptransco/Screens/Dashboards/Users/User_Dashboard.dart';
 import 'package:gptransco/Screens/Login/login_screen.dart';
 import 'package:gptransco/Screens/Signup/components/authentication_screen.dart';
 import 'package:gptransco/Services/Authentication.dart';
-import 'Screens/Dashboards/Users/chats/chathub.dart';
+import 'Screens/Dashboards/Users/Services.dart';
 import 'constants.dart';
 import 'firebase_options.dart';
 
 Future<void> main() async {
+  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+    statusBarColor: Colors.green,
+  ));
   WidgetsFlutterBinding.ensureInitialized();
-
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-
   runApp(const MyApp());
 }
 
@@ -27,8 +29,10 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'GPTransco',
       theme: ThemeData(
-          primarySwatch: Colors.teal,
-        dividerTheme: const DividerThemeData(color: gpSecondaryColor),
+          appBarTheme: const AppBarTheme(
+              iconTheme: IconThemeData(color: Colors.white),
+              backgroundColor: gpBottomNavigationColorDark),
+          dividerTheme: const DividerThemeData(color: gpSecondaryColor),
           iconTheme: const IconThemeData(size: 23, color: Colors.white),
           primaryColor: gpSecondaryColor,
           scaffoldBackgroundColor: gpPrimaryColor,
@@ -43,8 +47,8 @@ class MyApp extends StatelessWidget {
         "/": (context) => const Authentication(),
         "/auth": (context) => const AuthenticationScreen(),
         "/login": (context) => const LoginScreen(),
-        "/userdashboard": (context) => const UserDashboard(),
-        "/ChatHub": (context) => const ChatHub(),
+        "/userDashboard": (context) => const UserDashboard(),
+        "/UpdatePassword": (context) => const UpdatePassword(),
       },
     );
   }
