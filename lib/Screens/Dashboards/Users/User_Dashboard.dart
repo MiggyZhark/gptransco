@@ -2,7 +2,7 @@ import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.da
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../../../Services/firebase_database.dart';
-import 'Screens/booking.dart';
+import 'Screens/Booking_screen/booking.dart';
 import 'Screens/home.dart';
 import 'Screens/profile.dart';
 import 'Screens/rental.dart';

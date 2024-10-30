@@ -3,15 +3,10 @@ import 'package:flutter/services.dart';
 import '../../../../constants.dart';
 import '../components/homecard_slider.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends StatelessWidget {
   final Map<String, dynamic> userProfileData;
   const HomeScreen({super.key,required this.userProfileData});
 
-  @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -25,9 +20,9 @@ class _HomeScreenState extends State<HomeScreen> {
               Row(
                 children: [
                   CircleAvatar(backgroundColor: Colors.white,
-                    backgroundImage: widget.userProfileData['profileImageUrl'].startsWith('http')
-                        ? NetworkImage(widget.userProfileData['profileImageUrl'])
-                        : AssetImage(widget.userProfileData['profileImageUrl']) as ImageProvider,
+                    backgroundImage: userProfileData['profileImageUrl'].startsWith('http')
+                        ? NetworkImage(userProfileData['profileImageUrl'])
+                        : AssetImage(userProfileData['profileImageUrl']) as ImageProvider,
                   ),
                   const SizedBox(
                     width: 15,
@@ -45,7 +40,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           style: TextStyle(fontSize: 14), // Apply `textHeaderStyle` if defined
                         ),
                         TextSpan(
-                          text: widget.userProfileData['name'] ?? 'N/A',
+                          text: userProfileData['name'] ?? 'N/A',
                           style: const TextStyle(fontSize: 14),
                         ),
                         const TextSpan(
@@ -162,7 +157,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               width: 5,
                             ),
                             Text(
-                              'On Delivery',
+                              'N/A',
                               style: TextStyle(
                                 color: Colors.white,
                               ),
@@ -179,7 +174,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         padding: EdgeInsets.only(top: 20, left: 20, right: 20),
                         child: Text(
                           'Available Rentals',
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                          style: TextStyle(fontWeight: FontWeight.bold,fontSize: 12),
                         )),
                   ],
                 ),
@@ -200,6 +195,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   decoration: BoxDecoration(
                       color: Colors.blueGrey,
                       borderRadius: BorderRadius.circular(20)),
+                  child: Image.asset('assets/images/map.png'),
                 )
               ],
             ),

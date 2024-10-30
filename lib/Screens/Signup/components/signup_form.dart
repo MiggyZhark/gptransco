@@ -135,7 +135,7 @@ class _SignupFormState extends State<SignupForm> {
                       if (value == null || value.isEmpty) {
                         return 'Please enter your Name';
                       }
-                      if (value.length <= 6) {
+                      if (value.length <= 4) {
                         return 'Mobile number must be 5 characters';
                       }
                       return null;

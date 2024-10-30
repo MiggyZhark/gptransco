@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-
 import '../../../../constants.dart';
+import '../chats/chathub.dart';
 
 class RentalScreen extends StatelessWidget {
   const RentalScreen({super.key});
@@ -52,7 +52,7 @@ class RentalScreen extends StatelessWidget {
                     // Chat Icon button
                     ElevatedButton(
                       onPressed: () {
-                        Navigator.pushNamed(context, "/ChatHub");
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=> const ChatHub()));
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.teal[600],
