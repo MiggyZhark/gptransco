@@ -160,7 +160,7 @@ class _PackagesScreenState extends State<PackagesScreen> {
         body: Padding(
           padding: EdgeInsets.all(10),
           child: _userPackages.isEmpty
-              ? const Center(child: Text('No packages found'))
+              ? const Center(child: Text('No packages found',style: TextStyle(fontSize: 14),))
               : ListView.builder(
             itemCount: _userPackages.length,
             itemBuilder: (context, index) {

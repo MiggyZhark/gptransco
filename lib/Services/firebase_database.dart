@@ -1,8 +1,20 @@
-// database.dart
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class Database {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  // Method to get the current user ID
+  Future<String?> getCurrentUserId() async {
+    try {
+      final user = _auth.currentUser;
+      return user?.uid;
+    } catch (e) {
+      print("Error getting current user ID: $e");
+      return null;
+    }
+  }
 
   // Method to get user profile data by userId
   Future<Map<String, dynamic>?> getUserProfileData(String userId) async {
@@ -15,7 +27,4 @@ class Database {
       return null;
     }
   }
-
-
-
 }

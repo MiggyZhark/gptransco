@@ -17,7 +17,7 @@ const textButtonStyle = TextStyle(fontSize: 14,color: Colors.white,fontWeight: F
 //User Dashboard
 const gpBottomNavigationColor = Color.fromARGB(255, 58, 155, 138);
 const gpIconColor = Color.fromARGB(255, 15, 39, 35);
-const textBoxStyle = TextStyle(color: Colors.white,fontSize: 14);
+const textBoxStyle = TextStyle(color: Colors.white,fontSize: 12);
 const textHeaderStyle = TextStyle(fontSize: 14);
 
 //User Profile

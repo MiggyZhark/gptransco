@@ -82,7 +82,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             IconButton(
                 onPressed: () {},
                 icon: const Icon(
-                  Icons.settings,
+                  Icons.edit,
                   size: 20,
                   color: gpIconColor,
                 ))

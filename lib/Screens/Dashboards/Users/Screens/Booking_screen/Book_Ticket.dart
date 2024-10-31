@@ -1,6 +1,10 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart'; // Import firebase_auth
+
+import '../../../../../constants.dart';
+import 'booking.dart';
 
 class BookTicket extends StatefulWidget {
   final String currentLocation;
@@ -20,54 +24,54 @@ class _BookTicketState extends State<BookTicket> {
   int _currentStep = 0;
   String driverPlateNo = "";
   String assignedDriverID = "";
-  int driverSeats = 0;
-  bool isDriverLoaded = false;  // Flag to check if driver is already loaded
+  int remainingSeats = 18;
+  bool isDriverLoaded = false;
+  String? userUID; // Variable to store the user UID
 
-  // Fetch an available driver (Seats > 0) only if not already loaded
+  // Fetch current user's UID
+  void getCurrentUserUID() {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      setState(() {
+        userUID = user.uid;
+      });
+    }
+  }
+
+  // Fetch an available driver with Availability = true, Seats > 0, and address matching current location
   Future<void> getAvailableDriver() async {
-    if (isDriverLoaded) return;  // Skip if driver is already loaded
+    if (isDriverLoaded || userUID == null) return; // Ensure userUID is loaded before proceeding
 
     final driverQuery = await FirebaseFirestore.instance
         .collection('Driver')
-        .where('Seats', isGreaterThan: 0)
-        .orderBy('Seats', descending: true)
-        .limit(1)
+        .where('Availability', isEqualTo: true)         // Only get available drivers
+        .where('address', isEqualTo: widget.currentLocation) // Filter by current location
         .get();
 
-    if (driverQuery.docs.isNotEmpty) {
-      final driver = driverQuery.docs.first;
-      setState(() {
-        driverPlateNo = driver['PlateNo'];
-        assignedDriverID = driver.id;
-        driverSeats = driver['Seats'];
-        isDriverLoaded = true;  // Set to true after loading the driver
-      });
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('No available drivers. Please try again later.')),
-      );
-    }
-  }
+    for (var driver in driverQuery.docs) {
+      final passengerCount = await FirebaseFirestore.instance
+          .collection('Driver')
+          .doc(driver.id)
+          .collection('Passenger')
+          .get()
+          .then((snapshot) => snapshot.docs.length);
 
-  // Decrement the seat count for the assigned driver in Firebase
-  Future<void> decrementDriverSeatCount() async {
-    if (assignedDriverID.isNotEmpty) {
-      await FirebaseFirestore.instance.collection('Driver').doc(assignedDriverID).update({
-        'Seats': FieldValue.increment(-1),
-      });
-
-      // After decrementing, update the seat count locally
-      setState(() {
-        driverSeats -= 1;
-      });
-
-      // If seats reach zero, find a new driver for subsequent bookings
-      if (driverSeats <= 0) {
-        isDriverLoaded = false;  // Reset flag to fetch a new driver next time
-        await getAvailableDriver();
+      if (passengerCount < 18) {
+        setState(() {
+          driverPlateNo = driver['PlateNo'];
+          assignedDriverID = driver.id;
+          remainingSeats = 18 - passengerCount;
+          isDriverLoaded = true;
+        });
+        return;
       }
     }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('No available drivers in this location. Please try again later.')),
+    );
   }
+
 
   // Generate a unique ticket ID
   String generateTicketID() {
@@ -76,33 +80,44 @@ class _BookTicketState extends State<BookTicket> {
     return '$driverPlateNo-$randomNumber';
   }
 
-  // Save the ticket to Firebase
+  // Save the ticket in the Passenger subcollection with user UID as document ID
   Future<void> saveTicketToFirebase(String ticketID) async {
-    await FirebaseFirestore.instance.collection('tickets').add({
-      'currentLocation': widget.currentLocation,
-      'destination': widget.destination,
-      'seats': 1,
-      'ticketID': ticketID,
-      'driverPlateNo': driverPlateNo,
-    });
+    if (assignedDriverID.isNotEmpty && userUID != null) {
+      await FirebaseFirestore.instance
+          .collection('Driver')
+          .doc(assignedDriverID)
+          .collection('Passenger')
+          .doc(userUID) // Save document with current user's UID as ID
+          .set({
+        'currentLocation': widget.currentLocation,
+        'destination': widget.destination,
+        'ticketID': ticketID,
+        'driverPlateNo': driverPlateNo,
+      });
+    }
   }
 
   @override
   void initState() {
     super.initState();
-    getAvailableDriver();  // Load available driver on initialization if not loaded
+    getCurrentUserUID(); // Fetch user UID
+    getAvailableDriver();
   }
 
   void continueStepper() {
     if (_currentStep == 2) {
-      // Generate ticket ID and save the booking
       final ticketID = generateTicketID();
-      decrementDriverSeatCount(); // Update the driver’s seat count
       saveTicketToFirebase(ticketID).then((_) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Ticket Reserved with ID: $ticketID')),
         );
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> BookingsScreen()));
 
+        // Reload the available driver if needed
+        setState(() {
+          isDriverLoaded = false;
+        });
+        getAvailableDriver();
       });
     } else {
       setState(() {
@@ -121,47 +136,51 @@ class _BookTicketState extends State<BookTicket> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Ticket Booking Process')),
-      body: Stepper(
-        currentStep: _currentStep,
-        onStepContinue: continueStepper,
-        onStepCancel: cancelStepper,
-        steps: [
-          Step(
-            title: const Text('Location Details'),
-            content: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Current Location: ${widget.currentLocation}'),
-                Text('Destination: ${widget.destination}'),
-              ],
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Ticket Booking Process', style: headerTitle),
+        ),
+        body: Stepper(
+          currentStep: _currentStep,
+          onStepContinue: continueStepper,
+          onStepCancel: cancelStepper,
+          steps: [
+            Step(
+              title: const Text('Location Details'),
+              content: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Current Location: ${widget.currentLocation}'),
+                  Text('Destination: ${widget.destination}'),
+                ],
+              ),
+              isActive: _currentStep == 0,
             ),
-            isActive: _currentStep == 0,
-          ),
-          Step(
-            title: const Text('Seat Confirmation'),
-            content: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Driver Plate No: $driverPlateNo'),
-                Text('Available Seats: $driverSeats'),
-              ],
+            Step(
+              title: const Text('Seat Confirmation'),
+              content: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Driver Plate No: $driverPlateNo'),
+                  Text('Remaining Seats: $remainingSeats'),
+                ],
+              ),
+              isActive: _currentStep == 1,
             ),
-            isActive: _currentStep == 1,
-          ),
-          Step(
-            title: const Text('Ticket Confirmation'),
-            content: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Driver Plate No: $driverPlateNo'),
-                const Text('Click Continue to generate your ticket.'),
-              ],
+            Step(
+              title: const Text('Ticket Confirmation'),
+              content: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Driver Plate No: $driverPlateNo'),
+                  const Text('Click Continue to generate your ticket.'),
+                ],
+              ),
+              isActive: _currentStep == 2,
             ),
-            isActive: _currentStep == 2,
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

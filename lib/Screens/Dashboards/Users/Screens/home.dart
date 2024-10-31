@@ -118,7 +118,7 @@ class HomeScreen extends StatelessWidget {
                                   height: 10,
                                 ),
                                 Text(
-                                  'Location: N/A',
+                                  'Destination: N/A',
                                   style: textBoxStyle,
                                 ),
                               ],
@@ -182,21 +182,14 @@ class HomeScreen extends StatelessWidget {
                 Row(
                   children: [
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
                       child:
                           TextButton(onPressed: () {
                           }, child: const Text('More Info')),
                     ),
                   ],
                 ),
-                Container(
-                  width: MediaQuery.sizeOf(context).width * 1,
-                  height: MediaQuery.sizeOf(context).height * 0.22,
-                  decoration: BoxDecoration(
-                      color: Colors.blueGrey,
-                      borderRadius: BorderRadius.circular(20)),
-                  child: Image.asset('assets/images/map.png'),
-                )
+                ClipRRect(borderRadius:BorderRadius.circular(15),child: Image.asset('assets/images/Map.png'))
               ],
             ),
           ),

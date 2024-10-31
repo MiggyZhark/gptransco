@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../../../../../constants.dart';
 import 'Book_Ticket.dart';
+import 'My_ticket.dart';
 
 class BookingsScreen extends StatefulWidget {
   const BookingsScreen({super.key});
@@ -21,6 +22,8 @@ class _BookingsScreenState extends State<BookingsScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           title: Text('Select Current Location'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
@@ -57,6 +60,8 @@ class _BookingsScreenState extends State<BookingsScreen> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text('Select Destination'),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -134,7 +139,7 @@ class _BookingsScreenState extends State<BookingsScreen> {
                 ClipRRect(
                   child: Image.asset(
                     'assets/images/Van-driver.png',
-                    height: MediaQuery.sizeOf(context).height * 0.27,
+                    height: MediaQuery.sizeOf(context).height * 0.25,
                   ),
                 ),
               ],
@@ -220,7 +225,7 @@ class _BookingsScreenState extends State<BookingsScreen> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(top: 30.0),
+                    padding: const EdgeInsets.only(top: 10.0),
                     child: Center(
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(5),
@@ -244,14 +249,14 @@ class _BookingsScreenState extends State<BookingsScreen> {
                                   const EdgeInsets.symmetric(horizontal: 5.0),
                               child: TextButton(
                                 style: TextButton.styleFrom(
-                                  textStyle: const TextStyle(fontSize: 18),
+                                  textStyle: const TextStyle(fontSize: 14),
                                   padding: const EdgeInsets.symmetric(
                                       vertical: 15, horizontal: 70),
                                 ),
                                 onPressed: () {
                                   if (currentLocation != 'Current Location' &&
-                                      destination != 'Select Destination'){
-                                    if(currentLocation != destination){
+                                      destination != 'Select Destination') {
+                                    if (currentLocation != destination) {
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
@@ -261,21 +266,70 @@ class _BookingsScreenState extends State<BookingsScreen> {
                                           ),
                                         ),
                                       );
-                                    }
-                                    else{
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        const SnackBar(content: Text('Location & Destination should not be match')),
+                                    } else {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                            content: Text(
+                                                'Location & Destination should not be match')),
                                       );
                                     }
-                                  }
-                                  else{
+                                  } else {
                                     ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(content: Text('Please select a Location & Destination')),
+                                      const SnackBar(
+                                          content: Text(
+                                              'Please select a Location & Destination')),
                                     );
                                   }
                                 },
                                 child: const Text(
                                   'Get Reservation',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 20.0),
+                    child: Center(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(5),
+                        child: Stack(
+                          children: <Widget>[
+                            Positioned.fill(
+                              child: Container(
+                                decoration: const BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: <Color>[
+                                      Color(0xFF7D878E),
+                                      Color(0xFF85949A),
+                                      Color(0xFF7696A6)
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 5.0),
+                              child: TextButton(
+                                style: TextButton.styleFrom(
+                                  textStyle: const TextStyle(fontSize: 14),
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 15, horizontal: 70),
+                                ),
+                                onPressed: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => MyTicket()));
+                                },
+                                child: const Text(
+                                  'My Tickets',
                                   style: TextStyle(color: Colors.white),
                                 ),
                               ),
