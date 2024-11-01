@@ -1,8 +1,10 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:gptransco/Screens/Dashboards/Driver/Driver_Dashboard.dart';
 import 'package:gptransco/Screens/Dashboards/Users/User_Dashboard.dart';
 import '../../../Services/auth_service.dart';
 import '../../../Services/error_handling.dart';
@@ -26,13 +28,11 @@ class _LoginFormState extends State<LoginForm> {
   final _formKey = GlobalKey<FormState>();
 
   void handleLoginError(FirebaseAuthException e) {
-    // Always hide the loading dialog before showing the error
+    // Hide the loading dialog before showing the error
     if (mounted) {
       hideLoadingDialog(context);
 
       String errorMessage = 'An error occurred. Please try again.';
-
-      // Handle specific FirebaseAuthException error codes
       switch (e.code) {
         case 'user-not-found':
           errorMessage = 'No user found for that email.';
@@ -55,60 +55,52 @@ class _LoginFormState extends State<LoginForm> {
         case 'too-many-requests':
           errorMessage = 'Too many login attempts. Try again later.';
           break;
-        case 'channel-error':
-          errorMessage = 'Missing Password';
-          break;
         default:
-          // For any other errors, keep the default error message
           errorMessage = 'Error: Please Try Again';
           break;
       }
-      // Log the error (optional)
-      print('Error signing in: ${e.code} - ${e.message}');
 
-      // Show error banner with the custom error message
+      print('Error signing in: ${e.code} - ${e.message}');
       _errorHandler.showErrorBanner(context, 'Oh Snap, Error Occurred!',
           errorMessage, ContentType.failure);
     }
   }
 
-  void handleLoginResult(User? result) {
+  void handleNavigationAfterLogin(User? user, bool isDriver) {
     hideLoadingDialog(context);
-
-    if (result != null) {
-      // Check if the user is email verified
-      bool isEmailVerified = AuthService().isEmailVerified();
-      if (!isEmailVerified) {
-        hideLoadingDialog(context);
-        // Navigate to email verification page
-        Navigator.pushNamed(context, '/auth',
-            arguments: _email.text);
-      } else {
-        hideLoadingDialog(context);
-        // Navigate to user dashboard
-        Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(
-                builder: (context) => const UserDashboard()
-            ),
-            ModalRoute.withName("/userDashboard")
-        );
-      }
+    if (isDriver) {
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => const DriverDashboard()),
+              (route) => false);
     } else {
-      hideLoadingDialog(context);
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => const UserDashboard()),
+              (route) => false);
     }
   }
 
   Future<void> handleUserLogin() async {
-    // Show loading indicator
-    showLoadingDialog(context);
+    showLoadingDialog(context); // Show loading indicator
     try {
       // Attempt to sign in the user
       User? result = await _auth.signInWithEmailAndPassword(
         _email.text,
         _password.text,
       );
-      handleLoginResult(result);
+
+      if (result != null) {
+        final driverDoc = await FirebaseFirestore.instance
+            .collection('Driver')
+            .doc(result.uid)
+            .get();
+        bool isDriver = driverDoc.exists;
+        handleNavigationAfterLogin(result, isDriver);
+      } else {
+        handleLoginError(FirebaseAuthException(
+            code: 'login-failed', message: 'Login failed, please try again.'));
+      }
     } on FirebaseAuthException catch (e) {
       handleLoginError(e);
     }
@@ -125,157 +117,122 @@ class _LoginFormState extends State<LoginForm> {
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
-        const SizedBox(
-          height: 40,
-        ),
+        const SizedBox(height: 40),
         FadeInUp(
-            duration: const Duration(milliseconds: 1400),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                children: <Widget>[
-                  CustomTextField(
-                    controller: _email,
-                    keyboardType: TextInputType.name,
-                    hintText: 'Enter your email',
-                    obscureText: false,
-                    suffixIcon: const Icon(
-                      Icons.email_outlined,
-                      color: gpSecondaryColor,
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your email';
-                      }
-                      if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
-                        return 'Please enter a valid email address';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(
-                    height: 32,
-                  ),
-                  CustomTextField(
-                    controller: _password,
-                    keyboardType: TextInputType.visiblePassword,
-                    hintText: 'Password',
-                    obscureText: true,
-                    suffixIcon: const Icon(
-                      Icons.lock_outline,
-                      color: gpSecondaryColor,
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your password';
-                      }
-                      if (value.length <= 5) {
-                        return 'password must be 6 digits';
-                      }
-                      return null;
-                    },
-                  ),
-                ],
-              ),
-            )),
-        const SizedBox(
-          height: 30,
+          duration: const Duration(milliseconds: 1400),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: <Widget>[
+                CustomTextField(
+                  controller: _email,
+                  keyboardType: TextInputType.name,
+                  hintText: 'Enter your email',
+                  obscureText: false,
+                  suffixIcon: const Icon(Icons.email_outlined, color: gpSecondaryColor),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter your email';
+                    }
+                    if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
+                      return 'Please enter a valid email address';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 32),
+                CustomTextField(
+                  controller: _password,
+                  keyboardType: TextInputType.visiblePassword,
+                  hintText: 'Password',
+                  obscureText: true,
+                  suffixIcon: const Icon(Icons.lock_outline, color: gpSecondaryColor),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter your password';
+                    }
+                    if (value.length <= 5) {
+                      return 'Password must be 6 characters';
+                    }
+                    return null;
+                  },
+                ),
+              ],
+            ),
+          ),
         ),
+        const SizedBox(height: 30),
         Align(
           alignment: Alignment.centerRight,
           child: FadeInUp(
-              duration: const Duration(milliseconds: 1500),
-              child: TextButton(
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const ForgotPassword()));
-                },
-                child: const Text(
-                  'Forgot Password?',
-                  style: textStyleLS,
-                ),
-              )),
-        ),
-        const SizedBox(
-          height: 30,
-        ),
-        FadeInUp(
-            duration: const Duration(milliseconds: 1600),
-            child: MaterialButton(
+            duration: const Duration(milliseconds: 1500),
+            child: TextButton(
               onPressed: () {
-                // Check if the form is valid before proceeding
-                if (_formKey.currentState?.validate() ?? false) {
-                  handleUserLogin(); // Proceed with login if validation is successful
-                } else {
-                  // Optionally, you can show an error message or handle invalid input
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                        content: Text('Please fill in the required fields')),
-                  );
-                }
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const ForgotPassword()));
               },
-              height: 50,
-              // margin: EdgeInsets.symmetric(horizontal: 50),
-              color: gpSecondaryColor,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(17),
-              ),
-              // decoration: BoxDecoration(
-              // ),
-              child: const Center(
-                child: Text(
-                  "Login",
-                  style: textButtonStyle,
-                ),
-              ),
-            )),
-        const SizedBox(
-          height: 20,
+              child: const Text('Forgot Password?', style: textStyleLS),
+            ),
+          ),
         ),
+        const SizedBox(height: 30),
         FadeInUp(
-            duration: const Duration(milliseconds: 1700),
-            child: const Text(
-              "Or",
-              style: TextStyle(
-                  color: gpSecondaryColor,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16),
-            )),
-        const SizedBox(
-          height: 8,
+          duration: const Duration(milliseconds: 1600),
+          child: MaterialButton(
+            onPressed: () {
+              if (_formKey.currentState?.validate() ?? false) {
+                handleUserLogin(); // Proceed with login if validation is successful
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Please fill in the required fields')),
+                );
+              }
+            },
+            height: 50,
+            color: gpSecondaryColor,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(17)),
+            child: const Center(
+              child: Text("Login", style: textButtonStyle),
+            ),
+          ),
         ),
+        const SizedBox(height: 20),
+        FadeInUp(
+          duration: const Duration(milliseconds: 1700),
+          child: const Text("Or", style: TextStyle(
+              color: gpSecondaryColor, fontWeight: FontWeight.bold, fontSize: 16)),
+        ),
+        const SizedBox(height: 8),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             FadeInUp(
-                duration: const Duration(milliseconds: 1700),
-                child: const Text(
-                  'don\'t have account?',
-                  style: textStyleLS,
-                )),
+              duration: const Duration(milliseconds: 1700),
+              child: const Text("Don't have an account?", style: textStyleLS),
+            ),
             FadeInUp(
-                duration: const Duration(milliseconds: 1700),
-                child: TextButton(
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const SignupScreen()));
-                  },
-                  child: const Text(
-                    'Sign Up',
-                    style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: gpSecondaryColor,
-                        decoration: TextDecoration.underline),
-                  ),
-                ))
+              duration: const Duration(milliseconds: 1700),
+              child: TextButton(
+                onPressed: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => const SignupScreen()));
+                },
+                child: const Text(
+                  'Sign Up',
+                  style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: gpSecondaryColor,
+                      decoration: TextDecoration.underline),
+                ),
+              ),
+            )
           ],
         )
       ],
     );
   }
 }
+

@@ -48,6 +48,7 @@ dependencies:
   firebase_storage: ^12.2.0
   dash_chat_2: ^0.0.21
   drop_down_list: ^0.0.8
+  flutter_image_slideshow: ^0.1.6
 
 dev_dependencies:
   flutter_test:

@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -25,12 +24,30 @@ class ImageService {
   }
 
   // Function to upload the image to Firebase Storage and return the download URL
-  Future<String?> uploadImageToStorage(File imageFile) async {
+  Future<String?> userUploadImageToStorage(File imageFile) async {
     try {
       String uid = _auth.currentUser?.uid ?? 'unknown';
 
       final storageRef =
           FirebaseStorage.instance.ref().child('UserImages').child('$uid.jpg');
+
+      UploadTask uploadTask = storageRef.putFile(imageFile);
+      TaskSnapshot snapshot = await uploadTask;
+
+      String downloadUrl = await snapshot.ref.getDownloadURL();
+      return downloadUrl; // Return the image URL after upload
+    } catch (e) {
+      print('Error uploading image: $e');
+      return null;
+    }
+  }
+
+  Future<String?> driverUploadImageToStorage(File imageFile) async {
+    try {
+      String uid = _auth.currentUser?.uid ?? 'unknown';
+
+      final storageRef =
+      FirebaseStorage.instance.ref().child('DriverImages/$uid').child('$uid.jpg');
 
       UploadTask uploadTask = storageRef.putFile(imageFile);
       TaskSnapshot snapshot = await uploadTask;
@@ -56,6 +73,18 @@ class ImageService {
     }
   }
 
+  Future<void> saveDriverImageUrlToFirestore(String imageUrl) async {
+    try {
+      String uid = _auth.currentUser?.uid ?? 'unknown';
+
+      await FirebaseFirestore.instance.collection('Driver').doc(uid).update({
+        'driverImage': imageUrl,
+      });
+    } catch (e) {
+      print('Error saving image URL: $e');
+    }
+  }
+
   // Function to load the user's profile image URL from Firestore
   Future<String?> loadProfileImageFromFirestore() async {
     try {
@@ -73,6 +102,24 @@ class ImageService {
       return null;
     }
   }
+
+  Future<String?> loadDriverProfileImageFromFirestore() async {
+    try {
+      String uid = _auth.currentUser?.uid ?? 'unknown';
+
+      DocumentSnapshot userDoc =
+      await FirebaseFirestore.instance.collection('Driver').doc(uid).get();
+
+      if (userDoc.exists && userDoc['driverImage'] != null) {
+        return userDoc['driverImage'];
+      }
+      return null;
+    } catch (e) {
+      print('Error loading profile image: $e');
+      return null;
+    }
+  }
+
 }
 
 class UpdatePassword extends StatefulWidget {

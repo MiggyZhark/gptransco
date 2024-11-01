@@ -27,4 +27,15 @@ class Database {
       return null;
     }
   }
+
+  Future<Map<String, dynamic>?> getDriverProfileData(String userId) async {
+    try {
+      DocumentSnapshot<Map<String, dynamic>> userProfileSnapshot =
+      await _firestore.collection('Driver').doc(userId).get();
+      return userProfileSnapshot.data();
+    } catch (e) {
+      print("Error fetching user data: $e");
+      return null;
+    }
+  }
 }

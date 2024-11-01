@@ -1,10 +1,11 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:gptransco/Screens/Dashboards/Driver/Driver_Dashboard.dart';
 import 'package:gptransco/Screens/Dashboards/Users/User_Dashboard.dart';
 import 'package:gptransco/Screens/Login/login_screen.dart';
 import 'package:gptransco/Screens/Signup/components/authentication_screen.dart';
 import 'package:gptransco/Services/Authentication.dart';
-import 'Screens/Dashboards/Users/Services.dart';
+import 'Screens/Dashboards/components/Services.dart';
 import 'constants.dart';
 import 'firebase_options.dart';
 
@@ -44,6 +45,7 @@ class MyApp extends StatelessWidget {
         "/auth": (context) => const AuthenticationScreen(),
         "/login": (context) => const LoginScreen(),
         "/userDashboard": (context) => const UserDashboard(),
+        "/driverDashboard": (context) => const DriverDashboard(),
         "/UpdatePassword": (context) => const UpdatePassword(),
       },
     );

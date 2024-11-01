@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../constants.dart';
-import '../chats/chathub.dart';
+import '../../components/chathub.dart';
+import 'Rental_screen/car_info_card.dart';
 
 class RentalScreen extends StatelessWidget {
   const RentalScreen({super.key});
@@ -37,14 +38,13 @@ class RentalScreen extends StatelessWidget {
                           hintText: 'Search',
                           filled: true,
                           fillColor: Colors.teal[500],
-                          // Adjust color as per your UI
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(15),
                             borderSide: BorderSide.none,
                           ),
                         ),
                         style:
-                            const TextStyle(color: Colors.white, fontSize: 14),
+                        const TextStyle(color: Colors.white, fontSize: 14),
                       ),
                     ),
                     const SizedBox(width: 15),
@@ -78,7 +78,7 @@ class RentalScreen extends StatelessWidget {
                       label: const Text('Sort',
                           style: TextStyle(color: Colors.white)),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.teal[600], // Adjust color
+                        backgroundColor: Colors.teal[600],
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(15),
                         ),
@@ -92,7 +92,7 @@ class RentalScreen extends StatelessWidget {
                         // Pending action here
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.teal[600], // Adjust color
+                        backgroundColor: Colors.teal[600],
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(15),
                         ),
@@ -105,23 +105,46 @@ class RentalScreen extends StatelessWidget {
               ],
             ),
           ),
+
+          // Rental Contents
           Expanded(
-              child: Container(
-            width: MediaQuery.of(context).size.width * 1,
-            decoration: const BoxDecoration(
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              decoration: const BoxDecoration(
                 color: gpPrimaryColor,
                 borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(45),
-                    topRight: Radius.circular(45))),
-            child: const SingleChildScrollView(
+                  topLeft: Radius.circular(45),
+                  topRight: Radius.circular(45),
+                ),
+              ),
               child: Column(
                 children: [
-                  SizedBox(height: 10,),
-                  Text('Available for Rentals',style: TextStyle(fontSize: 14),)
+                  const SizedBox(height: 10),
+                  const Text(
+                    'Available for Rentals',
+                    style: TextStyle(fontSize: 14),
+                  ),
+                  const SizedBox(height: 10),
+
+                  // Scrollable container for car info
+                  Expanded(
+                    child: ListView.builder(
+                      padding: const EdgeInsets.symmetric(horizontal: 15),
+                      itemCount: 10, // Change this to the number of available rentals
+                      itemBuilder: (context, index) {
+                        return CarInfoCard(
+                          driverName: 'Driver ${index + 1}',
+                          seats: '${4 + index} seats',
+                          price: '₱${1000 + index * 5}', // Sample price
+                          isAvailable: index % 2 == 0, // Example: alternating availability
+                        );
+                      },
+                    ),
+                  ),
                 ],
               ),
             ),
-          ))
+          ),
         ],
       ),
     );

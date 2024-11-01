@@ -4,8 +4,8 @@ import 'package:flutter/services.dart';
 import 'package:gptransco/Services/auth_service.dart';
 import '../../../../Services/Authentication.dart';
 import '../../../../constants.dart';
-import '../Services.dart';
-import '../components/profiletextbox.dart';
+import '../../components/Services.dart';
+import '../../components/profiletextbox.dart';
 
 class ProfileScreen extends StatefulWidget {
   final Map<String, dynamic> userProfileData;
@@ -35,7 +35,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
 
     // Step 2: Upload the image to Firebase Storage and get the download URL
-    String? downloadUrl = await _imageService.uploadImageToStorage(imageFile);
+    String? downloadUrl = await _imageService.userUploadImageToStorage(imageFile);
     if (downloadUrl != null) {
       // Step 3: Save the new image URL to Firestore
       await _imageService.saveImageUrlToFirestore(downloadUrl);
