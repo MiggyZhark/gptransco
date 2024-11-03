@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_image_slideshow/flutter_image_slideshow.dart';
 
 class ImageSlideshowContainer extends StatelessWidget {
-  const ImageSlideshowContainer({super.key});
+  final List<String> imageUrls;
+
+  const ImageSlideshowContainer({super.key, required this.imageUrls});
 
   @override
   Widget build(BuildContext context) {
@@ -19,11 +21,9 @@ class ImageSlideshowContainer extends StatelessWidget {
             indicatorColor: Colors.teal,
             autoPlayInterval: 3000,
             isLoop: true,
-            children: [
-              Image.network('https://via.placeholder.com/150', fit: BoxFit.cover),
-              Image.network('https://via.placeholder.com/150', fit: BoxFit.cover),
-              Image.network('https://via.placeholder.com/150', fit: BoxFit.cover),
-            ],
+            children: imageUrls
+                .map((url) => Image.network(url, fit: BoxFit.cover))
+                .toList(),
           ),
         ],
       ),

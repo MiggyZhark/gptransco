@@ -1,18 +1,33 @@
 import 'package:flutter/material.dart';
-
 import 'rental_details.dart';
 
 class CarInfoCard extends StatelessWidget {
   final String driverName;
   final String seats;
   final String price;
-  final bool isAvailable; // New parameter to indicate availability
+  final bool isAvailable;
+  final String driverImageUrl;
+  final String plateNumber;
+  final String color;
+  final String fuelType;
+  final String stricted;
+  final String location;
+  final List<String> imageUrls;
+  final String uid;
 
   const CarInfoCard({
     required this.driverName,
     required this.seats,
     required this.price,
-    required this.isAvailable, // Add this parameter to constructor
+    required this.isAvailable,
+    required this.driverImageUrl,
+    required this.plateNumber,
+    required this.color,
+    required this.fuelType,
+    required this.stricted,
+    required this.location,
+    required this.imageUrls,
+    required this.uid,
     super.key,
   });
 
@@ -27,10 +42,13 @@ class CarInfoCard extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Container(
-            width: 50,
-            height: 50,
-            color: Colors.teal, // Placeholder for car image or icon
+          ClipOval(
+            child: Image.network(
+              driverImageUrl,
+              width: 50,
+              height: 50,
+              fit: BoxFit.cover,
+            ),
           ),
           const SizedBox(width: 10),
           Expanded(
@@ -39,10 +57,9 @@ class CarInfoCard extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    Text('Driver Name: $driverName',
+                    Text('Name: $driverName',
                         style: const TextStyle(fontSize: 11)),
                     const SizedBox(width: 5),
-                    // Status Dot
                     Icon(
                       Icons.circle,
                       color: isAvailable ? Colors.green : Colors.grey,
@@ -58,6 +75,7 @@ class CarInfoCard extends StatelessWidget {
                     ),
                   ],
                 ),
+                const SizedBox(height: 3),
                 Text('Seats: $seats', style: const TextStyle(fontSize: 9)),
                 Text('Price: $price', style: const TextStyle(fontSize: 10)),
               ],
@@ -70,10 +88,15 @@ class CarInfoCard extends StatelessWidget {
                 MaterialPageRoute(
                   builder: (context) => RentalDetailsScreen(
                     driverName: driverName,
+                    plateNumber: plateNumber,
+                    color: color,
+                    fuelType: fuelType,
+                    totalSeats: seats,
+                    stricted: stricted,
+                    location: location,
                     price: price,
-                    location: 'Sample Location', // Replace with actual location
-                    stricted:
-                        'Sample Stricted', // Replace with actual stricted information
+                    imageUrls: imageUrls,
+                    uid: uid,
                   ),
                 ),
               );

@@ -24,7 +24,7 @@ class AuthService {
         'uid': cred.user!.uid,
         'createdAt': FieldValue.serverTimestamp(),
         'isEmailVerified': false,
-        'profileImageUrl': '',
+        'profileImageUrl': 'assets/images/profile-user.png',
       });
 
       // Send email verification

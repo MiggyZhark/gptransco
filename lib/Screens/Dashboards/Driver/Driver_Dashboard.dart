@@ -2,11 +2,11 @@ import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.da
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../../../../Services/firebase_database.dart';
-import '../components/chathub.dart';
 import 'Screens/Dhome.dart';
 import 'Screens/Dpassengers.dart';
 import 'Screens/Dprofile.dart';
 import 'Screens/Drental.dart';
+import 'driver_chathub.dart';
 
 class DriverDashboard extends StatefulWidget {
   const DriverDashboard({super.key});
@@ -17,8 +17,8 @@ class DriverDashboard extends StatefulWidget {
 
 class _DriverDashboardState extends State<DriverDashboard> {
   var iconList = [
-    Icons.group,
     Icons.messenger,
+    Icons.group,
     Icons.car_rental,
     Icons.person,
   ];
@@ -29,8 +29,8 @@ class _DriverDashboardState extends State<DriverDashboard> {
 
   // List of screens for each tab
   final List<Widget> _screens = [
+    const DriverChatHub(),
     const Passengers(),
-    const ChatHub(),
     const DRentalScreen(),
     // ProfileScreen will be handled separately
   ];

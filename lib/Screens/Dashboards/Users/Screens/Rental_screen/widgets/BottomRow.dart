@@ -1,15 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
+import '../../../../components/message_screen.dart';
 
 class BottomRow extends StatelessWidget {
   final String price;
+  final String uid;
 
   const BottomRow({
     super.key,
     required this.price,
+    required this.uid,
   });
 
   @override
   Widget build(BuildContext context) {
+    // Get the current user's UID
+    final String? currentUserUid = FirebaseAuth.instance.currentUser?.uid;
+
     return Center(
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 250),
@@ -22,7 +30,23 @@ class BottomRow extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           ),
           onPressed: () {
-            // Define your button's action here
+            if (currentUserUid != null) {
+              // Navigate to MessageScreen with both current and receiver UIDs
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => MessageScreen(
+                    senderUid: currentUserUid,
+                    receiverUid: uid, profileImage: '', name: '',
+                  ),
+                ),
+              );
+            } else {
+              // Handle case where user is not logged in
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('User not logged in')),
+              );
+            }
           },
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -40,7 +64,11 @@ class BottomRow extends StatelessWidget {
               ),
               const Text(
                 'Message Now',
-                style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ],
           ),

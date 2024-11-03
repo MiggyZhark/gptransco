@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../constants.dart';
 import 'widgets/BottomRow.dart';
 import 'widgets/ImageSlideshowContainer.dart';
 import 'widgets/InformationSection.dart';
@@ -9,6 +10,12 @@ class RentalDetailsScreen extends StatelessWidget {
   final String price;
   final String location;
   final String stricted;
+  final String plateNumber;
+  final String color;
+  final String totalSeats;
+  final String fuelType;
+  final List<String> imageUrls;
+  final String uid;
 
   const RentalDetailsScreen({
     super.key,
@@ -16,6 +23,12 @@ class RentalDetailsScreen extends StatelessWidget {
     required this.price,
     required this.location,
     required this.stricted,
+    required this.plateNumber,
+    required this.color,
+    required this.totalSeats,
+    required this.fuelType,
+    required this.imageUrls,
+    required this.uid,
   });
 
   @override
@@ -30,33 +43,34 @@ class RentalDetailsScreen extends StatelessWidget {
             Navigator.pop(context);
           },
         ),
-        title: Text(driverName, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+        title: Text(driverName, style: headerTitle),
         centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            const ImageSlideshowContainer(),
-            const SizedBox(height: 10),
-            // Information section with sample data
-            const InformationSection(
-              driverName: 'John Doe',        // Sample data
-              plateNumber: 'XYZ 1234',       // Sample data
-              color: 'Red',                  // Sample data
-              totalSeats: '4',               // Sample data
-              fuelType: 'Diesel',            // Sample data
-            ),
-            const SizedBox(height: 10),
-            RestrictionLocationSection(
-              stricted: stricted,
-              location: location,
-            ),
-            const Spacer(),
-            BottomRow(price: price),
-          ],
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              ImageSlideshowContainer(imageUrls: imageUrls),
+              const SizedBox(height: 10),
+              InformationSection(
+                driverName: driverName,
+                plateNumber: plateNumber,
+                color: color,
+                totalSeats: totalSeats,
+                fuelType: fuelType,
+              ),
+              const SizedBox(height: 10),
+              RestrictionLocationSection(
+                stricted: stricted,
+                location: location,
+              ),
+              SizedBox(height: 20,),
+              BottomRow(price: price, uid: uid,),
+            ],
+          ),
         ),
       ),
     );

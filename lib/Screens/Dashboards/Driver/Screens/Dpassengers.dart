@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../../../../constants.dart';
 
 class Passengers extends StatelessWidget {
@@ -15,7 +14,7 @@ class Passengers extends StatelessWidget {
         ),
       ),
       body: Center(
-        child: Text(''),
+        child: Text('No Passenger Yet'),
       ),
     );
   }

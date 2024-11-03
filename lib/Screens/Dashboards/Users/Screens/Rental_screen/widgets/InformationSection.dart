@@ -20,7 +20,7 @@ class InformationSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        double maxWidth = 420.0; // Define your fixed max width here
+        double maxWidth = 420.0;
 
         return Center(
           child: ConstrainedBox(
