@@ -19,7 +19,7 @@ class _DriverDashboardState extends State<DriverDashboard> {
   var iconList = [
     Icons.messenger,
     Icons.group,
-    Icons.car_rental,
+    Icons.car_repair_sharp,
     Icons.person,
   ];
 

@@ -7,6 +7,17 @@ import '../../components/message_screen.dart';
 class UsersChatHub extends StatelessWidget {
   const UsersChatHub({super.key});
 
+  // Function to get the current user's profile image URL
+  Future<String?> getCurrentUserProfileImageUrl() async {
+    final currentUserUid = FirebaseAuth.instance.currentUser!.uid;
+    final userDoc = await FirebaseFirestore.instance.collection('users').doc(currentUserUid).get();
+
+    if (userDoc.exists) {
+      return userDoc.data()?['profileImageUrl'] as String?;
+    }
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     final currentUserUid = FirebaseAuth.instance.currentUser!.uid;
@@ -14,7 +25,7 @@ class UsersChatHub extends StatelessWidget {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Chats',style: headerTitle,),
+          title: const Text('Chats', style: headerTitle),
           backgroundColor: Colors.teal,
         ),
         body: StreamBuilder<QuerySnapshot>(
@@ -40,45 +51,56 @@ class UsersChatHub extends StatelessWidget {
               );
             }
 
-            return ListView(
-              children: userChats.map((doc) {
-                final receiverUid = doc['Participants'].firstWhere((uid) => uid != currentUserUid);
+            return FutureBuilder<String?>(
+              future: getCurrentUserProfileImageUrl(),
+              builder: (context, profileSnapshot) {
+                final currentUserProfileImage = profileSnapshot.data ?? '';
 
-                // Use a StreamBuilder to listen to changes in the user's profile data
-                return StreamBuilder<DocumentSnapshot>(
-                  stream: FirebaseFirestore.instance.collection('Driver').doc(receiverUid).snapshots(),
-                  builder: (context, userSnapshot) {
-                    if (!userSnapshot.hasData) {
-                      return ListTile(
-                        title: const Text('Loading...'),
-                        leading: const CircleAvatar(child: Icon(Icons.person, color: Colors.black,)),
-                      );
-                    }
+                return ListView(
+                  children: userChats.map((doc) {
+                    final receiverUid = doc['Participants'].firstWhere((uid) => uid != currentUserUid);
 
-                    final userData = userSnapshot.data!.data() as Map<String, dynamic>;
-                    final driverImage = userData['driverImage'] ?? '';
-                    final driverName = userData['driverName'] ?? 'Chat';
-
-                    return ListTile(
-                      leading: driverImage.isNotEmpty
-                          ? CircleAvatar(backgroundImage: NetworkImage(driverImage))
-                          : const CircleAvatar(child: Icon(Icons.person)),
-                      title: Text(driverName),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => MessageScreen(
-                              receiverUid: receiverUid,
-                              senderUid: currentUserUid, profileImage: '', name: '',
+                    // Use a StreamBuilder to listen to changes in the user's profile data
+                    return StreamBuilder<DocumentSnapshot>(
+                      stream: FirebaseFirestore.instance.collection('Driver').doc(receiverUid).snapshots(),
+                      builder: (context, userSnapshot) {
+                        if (!userSnapshot.hasData) {
+                          return ListTile(
+                            title: const Text('Loading...'),
+                            leading: const CircleAvatar(
+                              child: Icon(Icons.person, color: Colors.black),
                             ),
-                          ),
+                          );
+                        }
+
+                        final userData = userSnapshot.data!.data() as Map<String, dynamic>;
+                        final driverImage = userData['driverImage'] ?? '';
+                        final driverName = userData['driverName'] ?? 'Chat';
+
+                        return ListTile(
+                          leading: driverImage.isNotEmpty
+                              ? CircleAvatar(backgroundImage: NetworkImage(driverImage))
+                              : const CircleAvatar(child: Icon(Icons.person)),
+                          title: Text(driverName),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => MessageScreen(
+                                  receiverUid: receiverUid,
+                                  senderUid: currentUserUid,
+                                  profileImage: currentUserProfileImage,
+                                  name: driverName,
+                                ),
+                              ),
+                            );
+                          },
                         );
                       },
                     );
-                  },
+                  }).toList(),
                 );
-              }).toList(),
+              },
             );
           },
         ),

@@ -6,11 +6,15 @@ import '../../../../components/message_screen.dart';
 class BottomRow extends StatelessWidget {
   final String price;
   final String uid;
+  final String driverName;
+  final String profileImage;
 
   const BottomRow({
     super.key,
     required this.price,
     required this.uid,
+    required this.driverName,
+    required this.profileImage,
   });
 
   @override
@@ -37,7 +41,9 @@ class BottomRow extends StatelessWidget {
                 MaterialPageRoute(
                   builder: (context) => MessageScreen(
                     senderUid: currentUserUid,
-                    receiverUid: uid, profileImage: '', name: '',
+                    receiverUid: uid,
+                    profileImage: profileImage,
+                    name: driverName,
                   ),
                 ),
               );
@@ -52,7 +58,8 @@ class BottomRow extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
                   color: Colors.teal[800],
                   borderRadius: BorderRadius.circular(20),

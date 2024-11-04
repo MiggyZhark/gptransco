@@ -41,7 +41,7 @@ class DriverHomeScreen extends StatelessWidget {
                           style: TextStyle(fontSize: 14), // Apply `textHeaderStyle` if defined
                         ),
                         TextSpan(
-                          text: userProfileData['nickname'] ?? 'N/A',
+                          text: userProfileData['driverName'] ?? 'N/A',
                           style: const TextStyle(fontSize: 14),
                         ),
                         const TextSpan(

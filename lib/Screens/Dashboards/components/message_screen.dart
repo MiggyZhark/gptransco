@@ -56,7 +56,8 @@ class _MessageScreenState extends State<MessageScreen> {
           final data = doc.data();
           return ChatMessage(
             text: data['text'] as String,
-            user: ChatUser(id: data['userId'] as String),
+            user: ChatUser(
+                profileImage: data['profileUrl'], id: data['userId'] as String),
             createdAt: (data['createdAt'] as Timestamp).toDate(),
           );
         }).toList();
@@ -70,6 +71,7 @@ class _MessageScreenState extends State<MessageScreen> {
       'text': message.text,
       'userId': currentUser.id,
       'createdAt': FieldValue.serverTimestamp(),
+      'profileUrl': widget.profileImage,
     };
 
     // Add message to Firestore
@@ -97,15 +99,20 @@ class _MessageScreenState extends State<MessageScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.name,style: headerTitle,),
-        backgroundColor: Colors.teal,
-      ),
-      body: DashChat(
-        currentUser: currentUser,
-        onSend: _onSend,
-        messages: messages,
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(
+            widget.name,
+            style: headerTitle,
+          ),
+          backgroundColor: Colors.teal,
+        ),
+        body: DashChat(
+          currentUser: currentUser,
+          onSend: _onSend,
+          messages: messages,
+        ),
       ),
     );
   }

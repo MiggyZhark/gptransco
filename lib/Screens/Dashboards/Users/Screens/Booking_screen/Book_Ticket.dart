@@ -2,9 +2,8 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart'; // Import firebase_auth
-
 import '../../../../../constants.dart';
-import 'booking.dart';
+import 'My_ticket.dart';
 
 class BookTicket extends StatefulWidget {
   final String currentLocation;
@@ -58,7 +57,7 @@ class _BookTicketState extends State<BookTicket> {
 
       if (passengerCount < 18) {
         setState(() {
-          driverPlateNo = driver['PlateNo'];
+          driverPlateNo = driver['plateNumber'];
           assignedDriverID = driver.id;
           remainingSeats = 18 - passengerCount;
           isDriverLoaded = true;
@@ -92,7 +91,8 @@ class _BookTicketState extends State<BookTicket> {
         'currentLocation': widget.currentLocation,
         'destination': widget.destination,
         'ticketID': ticketID,
-        'driverPlateNo': driverPlateNo,
+        'plateNumber': driverPlateNo,
+        'createdAt': FieldValue.serverTimestamp(),
       });
     }
   }
@@ -111,7 +111,10 @@ class _BookTicketState extends State<BookTicket> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Ticket Reserved with ID: $ticketID')),
         );
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> BookingsScreen()));
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => const MyTicket()),
+                (route) => false);
 
         // Reload the available driver if needed
         setState(() {

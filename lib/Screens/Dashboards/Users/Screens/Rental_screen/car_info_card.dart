@@ -52,33 +52,35 @@ class CarInfoCard extends StatelessWidget {
           ),
           const SizedBox(width: 10),
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Text('Name: $driverName',
-                        style: const TextStyle(fontSize: 11)),
-                    const SizedBox(width: 5),
-                    Icon(
-                      Icons.circle,
-                      color: isAvailable ? Colors.green : Colors.grey,
-                      size: 9,
-                    ),
-                    const SizedBox(width: 5),
-                    Text(
-                      isAvailable ? 'Available' : 'Unavailable',
-                      style: TextStyle(
-                        fontSize: 10,
+            child: SingleChildScrollView(scrollDirection: Axis.horizontal,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Text('Name: $driverName',
+                          style: const TextStyle(fontSize: 11)),
+                      const SizedBox(width: 5),
+                      Icon(
+                        Icons.circle,
                         color: isAvailable ? Colors.green : Colors.grey,
+                        size: 9,
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 3),
-                Text('Seats: $seats', style: const TextStyle(fontSize: 9)),
-                Text('Price: $price', style: const TextStyle(fontSize: 10)),
-              ],
+                      const SizedBox(width: 5),
+                      Text(
+                        isAvailable ? 'Available' : 'Unavailable',
+                        style: TextStyle(
+                          fontSize: 10,
+                          color: isAvailable ? Colors.green : Colors.grey,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 3),
+                  Text('Seats: $seats', style: const TextStyle(fontSize: 9)),
+                  Text('Price: $price', style: const TextStyle(fontSize: 10)),
+                ],
+              ),
             ),
           ),
           IconButton(

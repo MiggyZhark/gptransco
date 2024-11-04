@@ -77,7 +77,7 @@ class _RentalScreenState extends State<RentalScreen> {
                           ),
                         ),
                         style:
-                            const TextStyle(color: Colors.white, fontSize: 14),
+                            const TextStyle(color: Colors.white, fontSize: 12),
                       ),
                     ),
                     const SizedBox(width: 15),

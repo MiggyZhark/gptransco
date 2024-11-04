@@ -54,7 +54,7 @@ class _HomeCardSliderState extends State<HomeCardSlider> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 165,
+      height: 150,
       child: ListView.separated(
         padding: const EdgeInsets.only(top: 16,left: 16,right: 16),
         itemCount: 6,
@@ -91,8 +91,8 @@ class _HomeCardSliderState extends State<HomeCardSlider> {
               const SizedBox(
                 height: 4,
               ),
-              Text(item.title,style: const TextStyle(fontWeight: FontWeight.bold),),
-              Text(item.subtitle)
+              Text(item.title,style: const TextStyle(fontSize: 12,fontWeight: FontWeight.bold),),
+              Text(item.subtitle,style: TextStyle(fontSize: 12),)
             ],
           ));
 }

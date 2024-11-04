@@ -6,6 +6,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:io';
 
+import '../../../../constants.dart';
+
 class DRentalScreen extends StatefulWidget {
   const DRentalScreen({super.key});
 
@@ -144,7 +146,7 @@ class _DRentalScreenState extends State<DRentalScreen> {
       child: Scaffold(
         backgroundColor: Colors.grey[200],
         appBar: AppBar(
-          title: const Text('GPVan'),
+          title: const Text('GPVan',style: headerTitle,),
         ),
         body: Padding(
           padding: const EdgeInsets.all(20.0),
