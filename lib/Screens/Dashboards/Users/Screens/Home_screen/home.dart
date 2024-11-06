@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../../../../constants.dart';
-import '../components/homecard_slider.dart';
+import '../../../../../constants.dart';
+import 'homecard_slider.dart';
 
 class HomeScreen extends StatelessWidget {
   final Map<String, dynamic> userProfileData;

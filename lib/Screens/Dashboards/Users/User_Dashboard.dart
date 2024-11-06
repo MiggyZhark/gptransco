@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../../../Services/firebase_database.dart';
 import 'Screens/Booking_screen/booking.dart';
-import 'Screens/home.dart';
+import 'Screens/Home_screen/home.dart';
 import 'Screens/profile.dart';
 import 'Screens/rental.dart';
 import 'Screens/Shipping_screen/shipping.dart';

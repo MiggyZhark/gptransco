@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:gptransco/Screens/Dashboards/Dispatcher/Dispatcher_Dashbord.dart';
 import 'package:gptransco/Screens/Dashboards/Driver/Driver_Dashboard.dart';
 import 'package:gptransco/Screens/Dashboards/Users/User_Dashboard.dart';
 import '../../../Services/auth_service.dart';
@@ -66,20 +67,30 @@ class _LoginFormState extends State<LoginForm> {
     }
   }
 
-  void handleNavigationAfterLogin(User? user, bool isDriver) {
+  void handleNavigationAfterLogin(User? user, String role) {
     hideLoadingDialog(context);
-    if (isDriver) {
+
+    if (role == 'Driver') {
       Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (context) => const DriverDashboard()),
-              (route) => false);
+        context,
+        MaterialPageRoute(builder: (context) => const DriverDashboard()),
+            (route) => false,
+      );
+    } else if (role == 'Dispatcher') {
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => const DispatcherDashboard()),
+            (route) => false,
+      );
     } else {
       Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (context) => const UserDashboard()),
-              (route) => false);
+        context,
+        MaterialPageRoute(builder: (context) => const UserDashboard()),
+            (route) => false,
+      );
     }
   }
+
 
   Future<void> handleUserLogin() async {
     showLoadingDialog(context); // Show loading indicator
@@ -91,12 +102,19 @@ class _LoginFormState extends State<LoginForm> {
       );
 
       if (result != null) {
-        final driverDoc = await FirebaseFirestore.instance
+        // Retrieve the role from Firestore
+        final userDoc = await FirebaseFirestore.instance
             .collection('Driver')
             .doc(result.uid)
             .get();
-        bool isDriver = driverDoc.exists;
-        handleNavigationAfterLogin(result, isDriver);
+
+        if (userDoc.exists) {
+          String role = userDoc.data()?['role'] ?? 'User'; // Default to 'User' if role is missing
+          handleNavigationAfterLogin(result, role);
+        } else {
+          handleLoginError(FirebaseAuthException(
+              code: 'user-not-found', message: 'User document does not exist.'));
+        }
       } else {
         handleLoginError(FirebaseAuthException(
             code: 'login-failed', message: 'Login failed, please try again.'));
@@ -105,6 +123,7 @@ class _LoginFormState extends State<LoginForm> {
       handleLoginError(e);
     }
   }
+
 
   @override
   void dispose() {

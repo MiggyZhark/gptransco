@@ -4,8 +4,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:gptransco/Screens/Dashboards/Users/Screens/Shipping_screen/packages_screen.dart';
+import 'package:image_picker/image_picker.dart';
+import '../../../../../Services/error_handling.dart';
 import '../../../../../constants.dart';
-import '../../components/shipping_image.dart';
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 
 class ShippingScreen extends StatefulWidget {
   const ShippingScreen({super.key});
@@ -15,6 +17,7 @@ class ShippingScreen extends StatefulWidget {
 }
 
 class _ShippingScreenState extends State<ShippingScreen> {
+  final errorHandler = ErrorHandling();
   final TextEditingController _packageInfoController = TextEditingController();
   final TextEditingController _priceController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
@@ -23,6 +26,7 @@ class _ShippingScreenState extends State<ShippingScreen> {
   String _selectedDestination = 'Palimbang';
   String _selectedTerminal = 'Gensan';
   bool _isImageSelected = false; // Track image selection status
+  final ImagePicker _picker = ImagePicker();
 
   final List<String> sensitivityOptions = ['True', 'False'];
   final List<String> destinationOptions = [
@@ -41,6 +45,60 @@ class _ShippingScreenState extends State<ShippingScreen> {
     });
   }
 
+  Future<void> _pickImage() async {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Select Image Source"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: const Icon(Icons.photo_library),
+                title: const Text("Gallery"),
+                onTap: () {
+                  Navigator.pop(context);
+                  _getImageFromGallery();
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.camera_alt),
+                title: const Text("Camera"),
+                onTap: () {
+                  Navigator.pop(context);
+                  _getImageFromCamera();
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _getImageFromGallery() async {
+    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+
+    if (image != null) {
+      setState(() {
+        _selectedImage = File(image.path);
+        _handleImageSelected(_selectedImage); // Call with image parameter
+      });
+    }
+  }
+
+  Future<void> _getImageFromCamera() async {
+    final XFile? image = await _picker.pickImage(source: ImageSource.camera);
+
+    if (image != null) {
+      setState(() {
+        _selectedImage = File(image.path);
+        _handleImageSelected(_selectedImage); // Call with image parameter
+      });
+    }
+  }
+
   @override
   void dispose() {
     _packageInfoController.dispose();
@@ -49,10 +107,12 @@ class _ShippingScreenState extends State<ShippingScreen> {
   }
 
   Future<void> _uploadPackage() async {
+    showLoadingDialog(context);
     if (!_isImageSelected || _selectedImage == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please select an image first')),
       );
+      hideLoadingDialog(context);
       return;
     }
 
@@ -80,7 +140,7 @@ class _ShippingScreenState extends State<ShippingScreen> {
           .collection('shippings') // Main collection
           .doc(terminalCollection) // Terminal as a sub-document
           .collection(
-              'packages') // Sub-collection for packages under each terminal
+          'packages') // Sub-collection for packages under each terminal
           .doc(packageId) // Unique package document
           .set({
         'packageInfo': _packageInfoController.text,
@@ -113,11 +173,10 @@ class _ShippingScreenState extends State<ShippingScreen> {
     }
   }
 
-  void uploadPackageHandler(){
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Package posted successfully')),
-    );
-    Navigator.push(context, MaterialPageRoute(builder: (context)=> const PackagesScreen()));
+  void uploadPackageHandler() {
+    hideLoadingDialog(context);
+    errorHandler.showErrorBanner(
+        context, 'Success', 'Package has been submitted', ContentType.success);
   }
 
   @override
@@ -134,7 +193,28 @@ class _ShippingScreenState extends State<ShippingScreen> {
       ),
       body: Column(
         children: [
-          ShippingImage(onImageSelected: _handleImageSelected),
+          GestureDetector(
+            onTap: _pickImage,
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 20, left: 20, right: 20),
+              child: Container(
+                height: 200,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  color: Colors.grey.shade200,
+                  image: _selectedImage != null
+                      ? DecorationImage(
+                      image: FileImage(_selectedImage!), fit: BoxFit.cover)
+                      : null,
+                ),
+                child: _selectedImage == null
+                    ? const Icon(Icons.add_a_photo,
+                    size: 50, color: Colors.grey)
+                    : null,
+              ),
+            ),
+          ),
           Expanded(
               child: Container(
             width: MediaQuery.of(context).size.width * 1,
@@ -189,12 +269,11 @@ class _ShippingScreenState extends State<ShippingScreen> {
                                 child: DropdownButtonFormField<String>(
                                   dropdownColor: gpPrimaryColor,
                                   decoration: const InputDecoration(
-                                    labelText: 'Fragile',
-                                    labelStyle: TextStyle(fontSize: 12),
-                                    border: OutlineInputBorder(),
-                                    contentPadding: EdgeInsets.symmetric(
-                                        vertical: 8, horizontal: 10)
-                                  ),
+                                      labelText: 'Fragile',
+                                      labelStyle: TextStyle(fontSize: 12),
+                                      border: OutlineInputBorder(),
+                                      contentPadding: EdgeInsets.symmetric(
+                                          vertical: 8, horizontal: 10)),
                                   value: _isSensitive,
                                   items: sensitivityOptions.map((String value) {
                                     return DropdownMenuItem<String>(
@@ -221,12 +300,11 @@ class _ShippingScreenState extends State<ShippingScreen> {
                                 child: DropdownButtonFormField<String>(
                                   dropdownColor: gpPrimaryColor,
                                   decoration: const InputDecoration(
-                                    labelText: 'Terminal',
-                                    labelStyle: TextStyle(fontSize: 12),
-                                    border: OutlineInputBorder(),
-                                    contentPadding: EdgeInsets.symmetric(
-                                        vertical: 8, horizontal: 10)
-                                  ),
+                                      labelText: 'Terminal',
+                                      labelStyle: TextStyle(fontSize: 12),
+                                      border: OutlineInputBorder(),
+                                      contentPadding: EdgeInsets.symmetric(
+                                          vertical: 8, horizontal: 10)),
                                   value: _selectedTerminal,
                                   items: terminalOptions.map((String value) {
                                     return DropdownMenuItem<String>(
@@ -247,12 +325,11 @@ class _ShippingScreenState extends State<ShippingScreen> {
                                 child: DropdownButtonFormField<String>(
                                   dropdownColor: gpPrimaryColor,
                                   decoration: const InputDecoration(
-                                    labelText: 'Destination',
-                                    labelStyle: TextStyle(fontSize: 12),
-                                    border: OutlineInputBorder(),
-                                    contentPadding: EdgeInsets.symmetric(
-                                        vertical: 8, horizontal: 10)
-                                  ),
+                                      labelText: 'Destination',
+                                      labelStyle: TextStyle(fontSize: 12),
+                                      border: OutlineInputBorder(),
+                                      contentPadding: EdgeInsets.symmetric(
+                                          vertical: 8, horizontal: 10)),
                                   value: _selectedDestination,
                                   items: destinationOptions.map((String value) {
                                     return DropdownMenuItem<String>(
@@ -282,13 +359,12 @@ class _ShippingScreenState extends State<ShippingScreen> {
                                   controller: _priceController,
                                   keyboardType: TextInputType.number,
                                   decoration: const InputDecoration(
-                                    prefixIcon: Icon(Icons.money),
-                                    labelText: '₱rice',
-                                    labelStyle: TextStyle(fontSize: 12),
-                                    border: OutlineInputBorder(),
-                                    contentPadding: EdgeInsets.symmetric(
-                                        vertical: 8, horizontal: 10)
-                                  ),
+                                      prefixIcon: Icon(Icons.money),
+                                      labelText: '₱rice',
+                                      labelStyle: TextStyle(fontSize: 12),
+                                      border: OutlineInputBorder(),
+                                      contentPadding: EdgeInsets.symmetric(
+                                          vertical: 8, horizontal: 10)),
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
                                       return 'Please enter your Price';
@@ -314,11 +390,13 @@ class _ShippingScreenState extends State<ShippingScreen> {
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) =>
-                                                  PackagesScreen()));
+                                                  const PackagesScreen()));
                                     },
-                                    child: const Text(
-                                      'Packages',
-                                      style: TextStyle(color: Colors.blue),
+                                    child: const FittedBox(
+                                      child: Text(
+                                        'Packages',
+                                        style: TextStyle(color: Colors.blue),
+                                      ),
                                     )),
                               ),
                               const SizedBox(

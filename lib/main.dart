@@ -5,9 +5,11 @@ import 'package:gptransco/Screens/Dashboards/Users/User_Dashboard.dart';
 import 'package:gptransco/Screens/Login/login_screen.dart';
 import 'package:gptransco/Screens/Signup/components/authentication_screen.dart';
 import 'package:gptransco/Services/Authentication.dart';
+import 'Screens/Dashboards/Dispatcher/Dispatcher_Dashbord.dart';
 import 'Screens/Dashboards/components/Services.dart';
 import 'constants.dart';
 import 'firebase_options.dart';
+
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -46,6 +48,7 @@ class MyApp extends StatelessWidget {
         "/login": (context) => const LoginScreen(),
         "/userDashboard": (context) => const UserDashboard(),
         "/driverDashboard": (context) => const DriverDashboard(),
+        "/dispatcherDashboard": (context) => const DispatcherDashboard(),
         "/UpdatePassword": (context) => const UpdatePassword(),
       },
     );

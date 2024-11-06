@@ -63,6 +63,27 @@ class _PackagesScreenState extends State<PackagesScreen> {
     }
   }
 
+  void scaffoldSnackBar (String message){
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
+  }
+
+  Future<void> cancelPackage(String terminal, String fullPackageId)async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('shippings')
+          .doc(terminal)
+          .collection('packages')
+          .doc(fullPackageId)
+          .delete();
+      Navigator.of(context).pop(); // Close dialog after deletion
+    } catch (e) {
+      print('Error deleting package: $e');
+      scaffoldSnackBar('Failed to cancel package.');
+    }
+  }
+
   void _showPackageDialog(BuildContext context, Map<String, dynamic> package) {
     final imageUrl = package['imageUrl'] ?? '';
     final productName = package['packageInfo'] ?? '';
@@ -115,20 +136,99 @@ class _PackagesScreenState extends State<PackagesScreen> {
             if (status == 'Pending')
               TextButton(
                 onPressed: () async {
-                  try {
-                    await FirebaseFirestore.instance
-                        .collection('shippings')
-                        .doc(terminal)
-                        .collection('packages')
-                        .doc(fullPackageId)
-                        .delete();
-                    Navigator.of(context).pop(); // Close dialog after deletion
-                  } catch (e) {
-                    print('Error deleting package: $e');
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Failed to cancel package.')),
-                    );
-                  }
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return Center(
+                        // Centering the dialog to make it smaller
+                        child: Container(
+                          constraints: const BoxConstraints(
+                              maxWidth: 400), // Limit the width
+                          child: AlertDialog(
+                            shape: RoundedRectangleBorder(
+                              borderRadius:
+                              BorderRadius.circular(10),
+                            ),
+                            title: const Text(
+                              'Confirm Cancel',
+                              style: TextStyle(
+                                color: gpBottomNavigationColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize:
+                                12, // Set header font size to 12
+                              ),
+                            ),
+                            content: const Text(
+                              'Are you sure you want to cancel this item?',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize:
+                                12, // Set content font size to 10
+                              ),
+                            ),
+                            actions: [
+                              Row(
+                                mainAxisAlignment:
+                                MainAxisAlignment.end,
+                                children: [
+                                  ElevatedButton(
+                                    style:
+                                    ElevatedButton.styleFrom(
+                                      padding: const EdgeInsets
+                                          .symmetric(
+                                          horizontal: 12,
+                                          vertical: 10),
+                                      minimumSize: Size
+                                          .zero, // Remove default minimum size
+                                      side: const BorderSide(
+                                          color:
+                                          gpBottomNavigationColor),
+                                      textStyle: const TextStyle(
+                                          fontSize:
+                                          12), // Set button text size to 10
+                                    ),
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: const Text('Cancel',
+                                        style: TextStyle(
+                                            color: Colors.black)),
+                                  ),
+                                  const SizedBox(width: 10),
+                                  ElevatedButton(
+                                    style:
+                                    ElevatedButton.styleFrom(
+                                      padding: const EdgeInsets
+                                          .symmetric(
+                                          horizontal: 12,
+                                          vertical: 10),
+                                      minimumSize: Size
+                                          .zero, // Remove default minimum size
+                                      backgroundColor:
+                                      gpBottomNavigationColor,
+                                      textStyle: const TextStyle(
+                                          fontSize:
+                                          12), // Set button text size to 10
+                                    ),
+                                    onPressed: () async {
+                                      await cancelPackage(terminal, fullPackageId);
+                                      Navigator.pop(
+                                          context); // Close the dialog
+                                    },
+                                    child: const Text(
+                                      'OK',
+                                      style: TextStyle(
+                                          color: Colors.white),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  );
                 },
                 child: const Text(
                   'Cancel Package',
