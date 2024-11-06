@@ -78,6 +78,10 @@ class _HomeCardSliderState extends State<HomeCardSlider> {
     }
   }
 
+  void _openBottomSheet(CardItem item){
+    showModalBottomSheet(context: context, builder: (ctx) => VanPage(item: item,));
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -110,12 +114,9 @@ class _HomeCardSliderState extends State<HomeCardSlider> {
                         : AssetImage(item.urlImage) as ImageProvider, // Fallback to asset image
                     fit: BoxFit.cover,
                     child: InkWell(
-                      onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => VanPage(item: item),
-                        ),
-                      ),
+                      onTap: () {
+                        _openBottomSheet(item);
+                      }
                     ),
                   ),
                 ),

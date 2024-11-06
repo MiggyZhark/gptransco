@@ -91,7 +91,6 @@ class _LoginFormState extends State<LoginForm> {
     }
   }
 
-
   Future<void> handleUserLogin() async {
     showLoadingDialog(context); // Show loading indicator
     try {
@@ -102,18 +101,31 @@ class _LoginFormState extends State<LoginForm> {
       );
 
       if (result != null) {
-        // Retrieve the role from Firestore
-        final userDoc = await FirebaseFirestore.instance
+        // Check the Driver collection for role
+        final driverDoc = await FirebaseFirestore.instance
             .collection('Driver')
             .doc(result.uid)
             .get();
 
-        if (userDoc.exists) {
-          String role = userDoc.data()?['role'] ?? 'User'; // Default to 'User' if role is missing
+        if (driverDoc.exists) {
+          // If user is found in Driver collection, use the role from there
+          String role = driverDoc.data()?['role'] ?? 'User';
           handleNavigationAfterLogin(result, role);
         } else {
-          handleLoginError(FirebaseAuthException(
-              code: 'user-not-found', message: 'User document does not exist.'));
+          // If not found in Driver collection, check the users collection
+          final userDoc = await FirebaseFirestore.instance
+              .collection('users')
+              .doc(result.uid)
+              .get();
+
+          if (userDoc.exists) {
+            // If found in users collection, use the role from there
+            String role = userDoc.data()?['role'] ?? 'User';
+            handleNavigationAfterLogin(result, role);
+          } else {
+            handleLoginError(FirebaseAuthException(
+                code: 'user-not-found', message: 'User document does not exist.'));
+          }
         }
       } else {
         handleLoginError(FirebaseAuthException(
@@ -123,6 +135,7 @@ class _LoginFormState extends State<LoginForm> {
       handleLoginError(e);
     }
   }
+
 
 
   @override

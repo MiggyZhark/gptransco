@@ -11,12 +11,29 @@ import '../constants.dart';
 class Authentication extends StatelessWidget {
   const Authentication({super.key});
 
-  Future<bool> isDriver(User user) async {
+  Future<String?> getUserRole(User user) async {
+    // First check the Driver collection
     final driverDoc = await FirebaseFirestore.instance
         .collection('Driver')
         .doc(user.uid)
         .get();
-    return driverDoc.exists && driverDoc['isDriver'] == true && driverDoc['role'] == 'Driver';
+
+    if (driverDoc.exists) {
+      return driverDoc.data()?['role'];
+    }
+
+    // If not found in Driver collection, check the users collection
+    final userDoc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .get();
+
+    if (userDoc.exists) {
+      return userDoc.data()?['role'];
+    }
+
+    // Return null if no role found in either collection
+    return null;
   }
 
   @override
@@ -24,7 +41,7 @@ class Authentication extends StatelessWidget {
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
         statusBarColor: gpSecondaryColor,
-        statusBarIconBrightness: Brightness.light, // Adjust based on design
+        statusBarIconBrightness: Brightness.light,
       ),
     );
     return Scaffold(
@@ -34,23 +51,27 @@ class Authentication extends StatelessWidget {
           if (snapshot.hasData) {
             final user = snapshot.data!;
 
-            return FutureBuilder<bool>(
-              future: isDriver(user),
-              builder: (context, isDriverSnapshot) {
-                if (isDriverSnapshot.connectionState == ConnectionState.waiting) {
+            return FutureBuilder<String?>(
+              future: getUserRole(user),
+              builder: (context, roleSnapshot) {
+                if (roleSnapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
-                } else if (isDriverSnapshot.hasData && isDriverSnapshot.data == true) {
-                  // Automatically navigates driver to DriverDashboard
-                  return const DriverDashboard();
-                }
-                else if(isDriverSnapshot.hasData && isDriverSnapshot.data == false){
-                  return const DispatcherDashboard();
-                }
-                else if (user.emailVerified) {
-                  // Non-driver verified user goes to UserDashboard
+                } else if (roleSnapshot.hasData) {
+                  final role = roleSnapshot.data;
+
+                  // Navigate based on role
+                  if (role == 'Driver') {
+                    return const DriverDashboard();
+                  } else if (role == 'Dispatcher') {
+                    return const DispatcherDashboard();
+                  } else {
+                    return const UserDashboard();
+                  }
+                } else if (user.emailVerified) {
+                  // Default to UserDashboard if no specific role is found
                   return const UserDashboard();
                 } else {
-                  // User not verified goes to OnboardingSlider
+                  // If the user's email isn't verified, go to onboarding
                   return const OnboardingSlider();
                 }
               },
@@ -64,4 +85,3 @@ class Authentication extends StatelessWidget {
     );
   }
 }
-
