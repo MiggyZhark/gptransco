@@ -19,7 +19,7 @@ class VanPage extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(15),
             child: AspectRatio(
-              aspectRatio: 5 / 3,
+              aspectRatio: 6 / 3,
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(15),
                 child: Image(
@@ -34,6 +34,7 @@ class VanPage extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 10),
+
         ],
       ),
     );
