@@ -6,16 +6,31 @@ class CardItem {
   final String urlImage;
   final String title;
   final String subtitle;
+  final String plateNumber;
+  final String fuelType;
+  final String address;
+  final String mobileNumber;
+  final String uid;
+  final String senderUid;
+  final String senderProfile;
 
-  const CardItem({
-    required this.urlImage,
-    required this.title,
-    required this.subtitle,
-  });
+  const CardItem(
+      {required this.urlImage,
+      required this.title,
+      required this.subtitle,
+      required this.plateNumber,
+      required this.fuelType,
+      required this.address,
+      required this.mobileNumber,
+      required this.uid,
+      required this.senderUid,
+      required this.senderProfile});
 }
 
 class HomeCardSlider extends StatefulWidget {
-  const HomeCardSlider({super.key});
+  final Map<String, dynamic> userProfileData;
+
+  const HomeCardSlider({super.key, required this.userProfileData});
 
   @override
   State<HomeCardSlider> createState() => _HomeCardSliderState();
@@ -24,7 +39,7 @@ class HomeCardSlider extends StatefulWidget {
 class _HomeCardSliderState extends State<HomeCardSlider> {
   List<CardItem> items = [];
   final CollectionReference driversCollection =
-  FirebaseFirestore.instance.collection('Driver');
+      FirebaseFirestore.instance.collection('Driver');
 
   @override
   void initState() {
@@ -44,23 +59,30 @@ class _HomeCardSliderState extends State<HomeCardSlider> {
         final driverData = driverDoc.data() as Map<String, dynamic>;
         final driverName = driverData['driverName'] ?? 'Unknown Driver';
         final price = driverData['Price'] ?? 'N/A';
+        final plateNumber = driverData['plateNumber'] ?? 'N/A';
+        final fuelType = driverData['fuelType'] ?? 'N/A';
+        final address = driverData['address'] ?? 'N/A';
+        final mobileNumber = driverData['mobileNumber'] ?? 'N/A';
+        final uid = driverData['uid'] ?? '';
 
         // Access the 'Vehicle' subcollection to get the first image
-        final vehicleCollection = driversCollection
-            .doc(driverDoc.id)
-            .collection('Vehicle');
+        final vehicleCollection =
+            driversCollection.doc(driverDoc.id).collection('Vehicle');
 
         QuerySnapshot vehicleSnapshot = await vehicleCollection.limit(1).get();
-        String firstImageUrl = 'assets/images/van_example.png'; // Default asset image
+        String firstImageUrl =
+            'assets/images/van_example.png'; // Default asset image
 
         if (vehicleSnapshot.docs.isNotEmpty) {
-          final vehicleData = vehicleSnapshot.docs.first.data() as Map<String, dynamic>;
+          final vehicleData =
+              vehicleSnapshot.docs.first.data() as Map<String, dynamic>;
 
           var imageUrlData = vehicleData['imageUrls'];
           if (imageUrlData is List && imageUrlData.isNotEmpty) {
             firstImageUrl = imageUrlData[0]; // Use the first URL from the list
           } else if (imageUrlData is String) {
-            firstImageUrl = imageUrlData; // Use the single string URL if present
+            firstImageUrl =
+                imageUrlData; // Use the single string URL if present
           }
         }
 
@@ -70,6 +92,13 @@ class _HomeCardSliderState extends State<HomeCardSlider> {
             urlImage: firstImageUrl,
             title: driverName,
             subtitle: '₱$price',
+            plateNumber: plateNumber,
+            fuelType: fuelType,
+            address: address,
+            mobileNumber: '+63-$mobileNumber',
+            uid: uid,
+            senderUid: widget.userProfileData['uid'],
+            senderProfile: widget.userProfileData['profileImageUrl'],
           ));
         });
       }
@@ -78,10 +107,10 @@ class _HomeCardSliderState extends State<HomeCardSlider> {
     }
   }
 
-  void _openBottomSheet(CardItem item){
-    showModalBottomSheet(context: context, builder: (ctx) => VanPage(item: item,));
+  void _openBottomSheet(CardItem item) {
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => VanPage(item: item)));
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -110,14 +139,14 @@ class _HomeCardSliderState extends State<HomeCardSlider> {
                 child: Material(
                   child: Ink.image(
                     image: item.urlImage.startsWith('http')
-                        ? NetworkImage(item.urlImage) // Use network image if valid URL
-                        : AssetImage(item.urlImage) as ImageProvider, // Fallback to asset image
+                        ? NetworkImage(
+                            item.urlImage) // Use network image if valid URL
+                        : AssetImage(item.urlImage) as ImageProvider,
+                    // Fallback to asset image
                     fit: BoxFit.cover,
-                    child: InkWell(
-                      onTap: () {
-                        _openBottomSheet(item);
-                      }
-                    ),
+                    child: InkWell(onTap: () {
+                      _openBottomSheet(item);
+                    }),
                   ),
                 ),
               ),
@@ -136,5 +165,4 @@ class _HomeCardSliderState extends State<HomeCardSlider> {
       ),
     );
   }
-
 }

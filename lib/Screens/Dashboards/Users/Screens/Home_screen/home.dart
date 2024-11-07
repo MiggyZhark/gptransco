@@ -178,7 +178,7 @@ class HomeScreen extends StatelessWidget {
                         )),
                   ],
                 ),
-                const HomeCardSlider(),
+                HomeCardSlider(userProfileData: userProfileData,),
                 Row(
                   children: [
                     Padding(
