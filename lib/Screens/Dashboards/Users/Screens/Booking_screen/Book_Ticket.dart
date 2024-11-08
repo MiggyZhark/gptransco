@@ -94,6 +94,18 @@ class _BookTicketState extends State<BookTicket> {
         'plateNumber': driverPlateNo,
         'createdAt': FieldValue.serverTimestamp(),
       });
+      await FirebaseFirestore.instance
+          .collection('Driver')
+          .doc(assignedDriverID)
+          .collection('Notification')
+          .doc(userUID) // Save document with current user's UID as ID
+          .set({
+        'currentLocation': widget.currentLocation,
+        'destination': widget.destination,
+        'ticketID': ticketID,
+        'plateNumber': driverPlateNo,
+        'createdAt': FieldValue.serverTimestamp(),
+      });
     }
   }
 

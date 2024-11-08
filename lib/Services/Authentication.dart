@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:gptransco/Screens/Dashboards/Dispatcher/Dispatcher_Dashbord.dart';
+import 'package:gptransco/Screens/Dashboards/Dispatcher/Dispatcher_Dashboard.dart';
 import 'package:gptransco/Screens/Welcome/Onboarding_slider.dart';
 import 'package:gptransco/Screens/Dashboards/Driver/Driver_Dashboard.dart';
 import '../Screens/Dashboards/Users/User_Dashboard.dart';

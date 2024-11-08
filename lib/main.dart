@@ -5,7 +5,7 @@ import 'package:gptransco/Screens/Dashboards/Users/User_Dashboard.dart';
 import 'package:gptransco/Screens/Login/login_screen.dart';
 import 'package:gptransco/Screens/Signup/components/authentication_screen.dart';
 import 'package:gptransco/Services/Authentication.dart';
-import 'Screens/Dashboards/Dispatcher/Dispatcher_Dashbord.dart';
+import 'Screens/Dashboards/Dispatcher/Dispatcher_Dashboard.dart';
 import 'Screens/Dashboards/components/Services.dart';
 import 'constants.dart';
 import 'firebase_options.dart';

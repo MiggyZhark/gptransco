@@ -1,6 +1,7 @@
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:gptransco/Screens/Dashboards/Dispatcher/Screens/Dispatcher_Profile.dart';
 import '../../../Services/firebase_database.dart';
 import 'Screens/Dispatcher_Home_Scree.dart';
 
@@ -21,7 +22,7 @@ class _DispatcherDashboardState extends State<DispatcherDashboard> {
 
   int _currentIndex = -1; // Initial index set to -1, representing HomeScreen
   final Database _database = Database(); // Instantiate the database service
-  Map<String, dynamic>? driverProfileData;
+  Map<String, dynamic>? dispatcherProfileData;
 
   // List of screens for each tab
   final List<Widget> _screens = [
@@ -42,7 +43,7 @@ class _DispatcherDashboardState extends State<DispatcherDashboard> {
     if (user != null) {
       Map<String, dynamic>? data = await _database.getDriverProfileData(user.uid);
       setState(() {
-        driverProfileData = data;
+        dispatcherProfileData = data;
       });
     }
   }
@@ -50,14 +51,14 @@ class _DispatcherDashboardState extends State<DispatcherDashboard> {
   @override
   Widget build(BuildContext context) {
     // Show loading indicator if userProfileData is not yet loaded
-    if (driverProfileData == null) {
+    if (dispatcherProfileData == null) {
       return const Scaffold(
         body: Center(child: CircularProgressIndicator()),
       );
     }
 
     // Home screen for the FAB with userProfileData
-    final Widget homeScreen = DispatcherHomeScreen(userProfileData: driverProfileData!);
+    final Widget homeScreen = DispatcherHomeScreen(userProfileData: dispatcherProfileData!);
 
     return SafeArea(
       child: Scaffold(
@@ -88,7 +89,8 @@ class _DispatcherDashboardState extends State<DispatcherDashboard> {
           onTap: (index) {
             setState(() {
               if (index == 3) { // If the profile tab is tapped
-                if (driverProfileData != null) {
+                if (dispatcherProfileData != null) {
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=> DispatcherProfileScreen(dispatcherProfileData: dispatcherProfileData!)));
                   //Dispatcher Profile
                 } else {
                   // Handle loading state or error if data is not available
