@@ -138,7 +138,7 @@ class DriverHomeScreen extends StatelessWidget {
                       style: TextStyle(color: Colors.black),
                     ),
                     onPressed: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context)=> LyricDisplay()));
+
                       // Handle report button press here
                     },
                     style: ElevatedButton.styleFrom(
