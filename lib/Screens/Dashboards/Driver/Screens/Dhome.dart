@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../Test/Lyrics.dart';
 import '../../../../constants.dart';
 
 class DriverHomeScreen extends StatelessWidget {
@@ -15,14 +16,6 @@ class DriverHomeScreen extends StatelessWidget {
             'GPTransco',
             style: headerTitle,
           ),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.clear_all, color: Colors.white),
-              onPressed: () {
-                // Handle notification button press here
-              },
-            ),
-          ],
         ),
         body: SingleChildScrollView(
           child: Padding(
@@ -111,12 +104,24 @@ class DriverHomeScreen extends StatelessWidget {
                 const SizedBox(height: 20),
 
                 // Notification List Section
-                Text(
-                  'Notifications',
-                  style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Notifications',
+                      style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87),
+                    ),
+                    IconButton(
+                        onPressed: () {},
+                        icon: Icon(
+                          size: 25,
+                          Icons.clear_all,
+                          color: Colors.black,
+                        ))
+                  ],
                 ),
                 const SizedBox(height: 10),
                 NotificationList(),
@@ -128,8 +133,12 @@ class DriverHomeScreen extends StatelessWidget {
                   width: double.infinity,
                   child: ElevatedButton.icon(
                     icon: Icon(Icons.report, color: Colors.white),
-                    label: Text('Lost & Found Report'),
+                    label: Text(
+                      'Lost & Found Report',
+                      style: TextStyle(color: Colors.black),
+                    ),
                     onPressed: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context)=> LyricDisplay()));
                       // Handle report button press here
                     },
                     style: ElevatedButton.styleFrom(

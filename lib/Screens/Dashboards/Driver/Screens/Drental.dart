@@ -258,7 +258,7 @@ class _DRentalScreenState extends State<DRentalScreen> {
                   child: const Text('Save', style: TextStyle(color: Colors.white, fontSize: 14)),
                 ),
               ),
-              SizedBox(height: 20,)
+              SizedBox(height: 25,)
             ],
           ),
         ),
