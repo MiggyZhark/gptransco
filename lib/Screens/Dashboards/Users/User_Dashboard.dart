@@ -1,4 +1,5 @@
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../../../Services/firebase_database.dart';
@@ -39,6 +40,7 @@ class _UserDashboardState extends State<UserDashboard> {
   void initState() {
     super.initState();
     getCurrentUserProfile(); // Pre-fetch user profile data on initialization
+    checkExpiredTickets();
   }
 
   // Method to fetch user profile data
@@ -51,6 +53,22 @@ class _UserDashboardState extends State<UserDashboard> {
       });
     }
   }
+
+  Future<void> checkExpiredTickets() async {
+    final now = DateTime.now();
+    final ticketsSnapshot = await FirebaseFirestore.instance
+        .collectionGroup('Passenger')
+        .where('status', isEqualTo: 'Waiting')
+        .get();
+
+    for (var ticket in ticketsSnapshot.docs) {
+      final expiration = ticket['expirationDate']?.toDate();
+      if (expiration != null && now.isAfter(expiration)) {
+        await ticket.reference.update({'status': 'Expired'});
+      }
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {

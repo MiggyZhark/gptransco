@@ -54,68 +54,41 @@ class _BookingsScreenState extends State<BookingsScreen> {
   }
 
   // Function to show Select Destination dialog
+  // Function to show Select Destination dialog
   void showDestinationDialog(BuildContext context) {
+    // List of all possible destinations
+    List<String> destinations = ['Gensan', 'Palimbang', 'Maasim', 'Maitum', 'Kiamba'];
+
+    // Filter out the currentLocation from the list of destinations
+    List<String> filteredDestinations = destinations
+        .where((destination) => destination != currentLocation)
+        .toList();
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text('Select Destination'),
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           content: Column(
             mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                title: Text('Gensan'),
+            children: filteredDestinations.map((destination) {
+              return ListTile(
+                title: Text(destination),
                 onTap: () {
                   setState(() {
-                    destination = 'Gensan';
+                    this.destination = destination;
                   });
-                  Navigator.of(context).pop();
+                  Navigator.of(context).pop(); // Close dialog
                 },
-              ),
-              ListTile(
-                title: Text('Palimbang'),
-                onTap: () {
-                  setState(() {
-                    destination = 'Palimbang';
-                  });
-                  Navigator.of(context).pop();
-                },
-              ),
-              ListTile(
-                title: Text('Maasim'),
-                onTap: () {
-                  setState(() {
-                    destination = 'Maasim';
-                  });
-                  Navigator.of(context).pop();
-                },
-              ),
-              ListTile(
-                title: Text('Maitum'),
-                onTap: () {
-                  setState(() {
-                    destination = 'Maitum';
-                  });
-                  Navigator.of(context).pop();
-                },
-              ),
-              ListTile(
-                title: Text('Kiamba'),
-                onTap: () {
-                  setState(() {
-                    destination = 'Kiamba';
-                  });
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
+              );
+            }).toList(),
           ),
         );
       },
     );
   }
+
 
   @override
   Widget build(BuildContext context) {

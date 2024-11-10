@@ -48,6 +48,11 @@ class SignupScreen extends StatelessWidget {
               child: FadeInUp(
                 duration: const Duration(milliseconds: 1300),
                 child: Container(
+                  decoration: const BoxDecoration(
+                      color: gpPrimaryColor,
+                      borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(60),
+                          topRight: Radius.circular(60))),
                   child: const Padding(
                     padding: EdgeInsets.all(25),
                     child: SingleChildScrollView(

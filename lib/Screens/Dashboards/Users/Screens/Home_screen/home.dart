@@ -19,10 +19,20 @@ class HomeScreen extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  CircleAvatar(backgroundColor: Colors.white,
-                    backgroundImage: userProfileData['profileImageUrl'].startsWith('http')
+                  CircleAvatar(
+                    backgroundColor: Colors.black,
+                    backgroundImage: (userProfileData['profileImageUrl'] != null &&
+                        userProfileData['profileImageUrl'].startsWith('http'))
                         ? NetworkImage(userProfileData['profileImageUrl'])
-                        : AssetImage(userProfileData['profileImageUrl']) as ImageProvider,
+                        : null,
+                    child: (userProfileData['profileImageUrl'] == null ||
+                        !userProfileData['profileImageUrl'].startsWith('http'))
+                        ? const Icon(
+                      Icons.person,
+                      size: 30,
+                      color: Colors.white,
+                    )
+                        : null,
                   ),
                   const SizedBox(
                     width: 15,

@@ -6,6 +6,7 @@ import 'package:gptransco/Services/error_handling.dart';
 import '../../../Services/auth_service.dart';
 import '../../../constants.dart';
 import '../../Login/login_screen.dart';
+import 'TermsNCondition.dart';
 import 'customTextfield.dart';
 
 class SignupForm extends StatefulWidget {
@@ -164,15 +165,15 @@ class _SignupFormState extends State<SignupForm> {
                     height: 20,
                   ),
                   CustomTextField(
-                      controller: _mobileNumber,
-                      keyboardType: TextInputType.number,
-                      hintText: 'Mobile Number',
-                      obscureText: false,
-                      suffixIcon: const Icon(
-                        Icons.phone_android,
-                        color: gpSecondaryColor,
-                      ),
-                      maxChar: 11,
+                    controller: _mobileNumber,
+                    keyboardType: TextInputType.number,
+                    hintText: 'Mobile Number',
+                    obscureText: false,
+                    suffixIcon: const Icon(
+                      Icons.phone_android,
+                      color: gpSecondaryColor,
+                    ),
+                    maxChar: 11,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please enter your mobile number';
@@ -257,7 +258,13 @@ class _SignupFormState extends State<SignupForm> {
                     style: textStyleLS,
                   ),
                   TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    TermsAndConditionsScreen()));
+                      },
                       child: const Text(
                         'Terms & Conditions',
                         style: TextStyle(

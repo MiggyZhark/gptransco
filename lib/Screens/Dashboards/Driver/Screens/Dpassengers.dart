@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:intl/intl.dart';  // Import the intl package for date formatting
+import 'package:intl/intl.dart'; // Import the intl package for date formatting
 import '../../../../constants.dart';
 
 class Passengers extends StatelessWidget {
@@ -47,18 +47,18 @@ class Passengers extends StatelessWidget {
           }
 
           if (snapshot.hasError) {
-            return Center(child: Text('Error fetching reservation'));
+            return Center(child: Text('Error fetching reservations'));
           }
 
           if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-            return Center(child: Text('No reservation Yet'));
+            return Center(child: Text('No reservations yet'));
           }
 
           // Extract 'ticketID' and 'createdAt' from each document
           List<Map<String, dynamic>> tickets = snapshot.data!.docs.map((doc) {
             return {
               'ticketID': doc['ticketID'] as String,
-              'createdAt': doc['createdAt'] as Timestamp
+              'createdAt': doc['createdAt'] as Timestamp,
             };
           }).toList();
 
@@ -69,10 +69,34 @@ class Passengers extends StatelessWidget {
               String formattedDate = DateFormat('MMMM dd, yyyy, hh:mm a')
                   .format(tickets[index]['createdAt'].toDate());
 
-              return ListTile(
-                leading: Text('#${index + 1}'), // Display the count
-                title: Text('Ticket ID: ${tickets[index]['ticketID']}'),
-                subtitle: Text('Created At: $formattedDate'),
+              return Card(
+                elevation: 4,
+                margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: ListTile(
+                  leading: CircleAvatar(
+                    radius: 15,
+                    backgroundColor: Colors.teal,
+                    child: Text(
+                      '${index + 1}',
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                  ),
+                  title: Text(
+                    'Ticket ID: ${tickets[index]['ticketID']}',
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  subtitle: Text('Created At: $formattedDate'),
+                  trailing: IconButton(
+                    icon: const Icon(Icons.info, color: Colors.blueGrey),
+                    onPressed: () {
+                      // Navigate to MessageScreen with the ticketID
+
+                    },
+                  ),
+                ),
               );
             },
           );

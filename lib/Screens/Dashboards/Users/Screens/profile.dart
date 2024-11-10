@@ -379,13 +379,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Stack(
               children: [
                 CircleAvatar(
-                  backgroundColor: Colors.white,
+                  backgroundColor: Colors.black,
                   radius: 55,
-                  backgroundImage: widget.userProfileData['profileImageUrl']
-                      .startsWith('http')
+                  backgroundImage: (widget.userProfileData['profileImageUrl'] != null &&
+                      widget.userProfileData['profileImageUrl'].startsWith('http'))
                       ? NetworkImage(widget.userProfileData['profileImageUrl'])
-                      : AssetImage(widget.userProfileData['profileImageUrl'])
-                  as ImageProvider,
+                      : null,
+                  child: (widget.userProfileData['profileImageUrl'] == null ||
+                      !widget.userProfileData['profileImageUrl'].startsWith('http'))
+                      ? const Icon(
+                    Icons.person,
+                    size: 60,
+                    color: Colors.white,
+                  )
+                      : null,
                 ),
                 Positioned(
                   bottom: 0,

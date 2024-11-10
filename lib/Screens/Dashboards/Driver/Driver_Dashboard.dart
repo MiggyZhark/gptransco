@@ -1,8 +1,9 @@
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../../Services/firebase_database.dart';
-import 'Screens/Dhome.dart';
+import 'Screens/Driver_Home/Dhome.dart';
 import 'Screens/Dpassengers.dart';
 import 'Screens/Dprofile.dart';
 import 'Screens/Drental.dart';
@@ -16,6 +17,10 @@ class DriverDashboard extends StatefulWidget {
 }
 
 class _DriverDashboardState extends State<DriverDashboard> {
+  final Database _database = Database();
+  Map<String, dynamic>? driverProfileData;
+  int totalReservations = 0;
+
   var iconList = [
     Icons.messenger,
     Icons.group,
@@ -23,25 +28,21 @@ class _DriverDashboardState extends State<DriverDashboard> {
     Icons.person,
   ];
 
-  int _currentIndex = -1; // Initial index set to -1, representing HomeScreen
-  final Database _database = Database(); // Instantiate the database service
-  Map<String, dynamic>? driverProfileData;
-
-  // List of screens for each tab
+  int _currentIndex = -1;
   final List<Widget> _screens = [
     const DriverChatHub(),
     const Passengers(),
     const DRentalScreen(),
-    // ProfileScreen will be handled separately
   ];
 
   @override
   void initState() {
     super.initState();
-    getCurrentUserProfile(); // Pre-fetch user profile data on initialization
+    getCurrentUserProfile(); // Fetch driver profile data
+    fetchTotalReservations(); // Fetch total reservations
   }
 
-  // Method to fetch user profile data
+  // Fetch the driver profile data
   Future<void> getCurrentUserProfile() async {
     User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
@@ -52,25 +53,46 @@ class _DriverDashboardState extends State<DriverDashboard> {
     }
   }
 
+  // Fetch the total reservations count
+  Future<void> fetchTotalReservations() async {
+    try {
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        final querySnapshot = await FirebaseFirestore.instance
+            .collection('Driver')
+            .doc(user.uid)
+            .collection('Passenger')
+            .get();
+
+        setState(() {
+          totalReservations = querySnapshot.size;
+        });
+      }
+    } catch (e) {
+      print('Error fetching reservations: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    // Show loading indicator if userProfileData is not yet loaded
     if (driverProfileData == null) {
       return const Scaffold(
         body: Center(child: CircularProgressIndicator()),
       );
     }
 
-    // Home screen for the FAB with userProfileData
-    final Widget homeScreen = DriverHomeScreen(userProfileData: driverProfileData!);
+    final Widget homeScreen = DriverHomeScreen(
+      userProfileData: driverProfileData!,
+      totalReservations: totalReservations, // Pass total reservations
+    );
 
     return SafeArea(
       child: Scaffold(
-        body: _currentIndex == -1 ? homeScreen : _screens[_currentIndex], // Show home screen or selected tab
+        body: _currentIndex == -1 ? homeScreen : _screens[_currentIndex],
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             setState(() {
-              _currentIndex = -1; // Set to -1 to represent the Home screen
+              _currentIndex = -1;
             });
           },
           backgroundColor: Colors.black87,
@@ -87,27 +109,21 @@ class _DriverDashboardState extends State<DriverDashboard> {
           inactiveColor: Colors.white,
           backgroundColor: Colors.black87,
           icons: iconList,
-          activeIndex: _currentIndex == -1 ? -1 : _currentIndex, // Ensure FAB is treated separately
+          activeIndex: _currentIndex,
           gapLocation: GapLocation.center,
           notchSmoothness: NotchSmoothness.softEdge,
           onTap: (index) {
             setState(() {
-              if (index == 3) { // If the profile tab is tapped
-                if (driverProfileData != null) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => DriverProfileScreen(userProfileData: driverProfileData!), // Pass user data to ProfileScreen
-                    ),
-                  );
-                } else {
-                  // Handle loading state or error if data is not available
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Profile data is still loading.')),
-                  );
-                }
+              if (index == 3) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => DriverProfileScreen(
+                        userProfileData: driverProfileData!),
+                  ),
+                );
               } else {
-                _currentIndex = index; // Update the index based on tab selection, except for Profile
+                _currentIndex = index;
               }
             });
           },

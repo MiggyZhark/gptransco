@@ -15,14 +15,6 @@ class OnboardingSlider extends StatelessWidget {
           'GPTransco',
           style: TextStyle(color: gpPrimaryColor, fontSize: 18),
         ),
-        trailingFunction: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const LoginScreen(),
-            ),
-          );
-        },
         onFinish: () {
           Navigator.push(
             context,
@@ -42,10 +34,6 @@ class OnboardingSlider extends StatelessWidget {
         ),
         skipTextButton: const Text(
           'Skip',
-          style: TextStyle(color: gpPrimaryColor),
-        ),
-        trailing: const Text(
-          'Login',
           style: TextStyle(color: gpPrimaryColor),
         ),
         background: [
@@ -150,7 +138,7 @@ class OnboardingSlider extends StatelessWidget {
                   style: TextStyle(color: gpSecondaryColor),
                 ),
                 SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.19,
+                  height: MediaQuery.of(context).size.height * 0.15,
                 ),
                 const Text(
                   textAlign: TextAlign.center,
@@ -160,7 +148,30 @@ class OnboardingSlider extends StatelessWidget {
                       fontSize: 20,
                       color: gpSecondaryColor),
                 ),
-                const Divider(thickness: 1,color: gpSecondaryColor,
+                const Divider(
+                  thickness: 1,
+                  color: gpSecondaryColor,
+                ),
+                MaterialButton(
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const LoginScreen()));
+                  },
+                  height: 50,
+                  color: Colors.grey[400],
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15)),
+                  child: const Center(
+                    child: Text(
+                      "Login",
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                          color: Colors.black),
+                    ),
+                  ),
                 ),
               ],
             ),

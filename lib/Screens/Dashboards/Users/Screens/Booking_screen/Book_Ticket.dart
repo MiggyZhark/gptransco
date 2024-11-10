@@ -26,6 +26,9 @@ class _BookTicketState extends State<BookTicket> {
   int remainingSeats = 18;
   bool isDriverLoaded = false;
   String? userUID; // Variable to store the user UID
+  DateTime? scheduledDate;
+  DateTime? expirationDate;
+
 
   // Fetch current user's UID
   void getCurrentUserUID() {
@@ -93,21 +96,72 @@ class _BookTicketState extends State<BookTicket> {
         'ticketID': ticketID,
         'plateNumber': driverPlateNo,
         'createdAt': FieldValue.serverTimestamp(),
+        'scheduledDate': scheduledDate,
+        'expirationDate': expirationDate,
+        'status': 'Waiting',
       });
+
+      // Notification entry for the driver
       await FirebaseFirestore.instance
           .collection('Driver')
           .doc(assignedDriverID)
           .collection('Notification')
-          .doc(userUID) // Save document with current user's UID as ID
+          .doc(userUID)
+          .set({
+        'Title': 'Reservation',
+        'message': 'A customer has reserved a trip to ${widget.destination}.',
+        'ticketID': ticketID,
+        'createdAt': FieldValue.serverTimestamp(),
+      });
+
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userUID)
+          .collection('my_ticket')
+          .doc(userUID)
           .set({
         'currentLocation': widget.currentLocation,
         'destination': widget.destination,
         'ticketID': ticketID,
         'plateNumber': driverPlateNo,
         'createdAt': FieldValue.serverTimestamp(),
+        'scheduledDate': scheduledDate,
+        'expirationDate': expirationDate,
+        'status': 'Waiting',
       });
     }
   }
+
+
+  Future<void> pickScheduleDate() async {
+    final pickedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime.now().add(const Duration(days: 30)),
+    );
+
+    if (pickedDate != null) {
+      final pickedTime = await showTimePicker(
+        context: context,
+        initialTime: TimeOfDay.now(),
+      );
+
+      if (pickedTime != null) {
+        setState(() {
+          scheduledDate = DateTime(
+            pickedDate.year,
+            pickedDate.month,
+            pickedDate.day,
+            pickedTime.hour,
+            pickedTime.minute,
+          );
+          expirationDate = scheduledDate!.add(const Duration(days: 1));
+        });
+      }
+    }
+  }
+
 
   @override
   void initState() {
@@ -117,16 +171,23 @@ class _BookTicketState extends State<BookTicket> {
   }
 
   void continueStepper() {
-    if (_currentStep == 2) {
+    if (_currentStep == 1) {
+      // Ensure that a scheduled date is selected before continuing
+      if (scheduledDate == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Please pick a schedule date before proceeding.')),
+        );
+        return; // Prevent advancing to the next step
+      }
+    }
+
+    if (_currentStep == 3) {
       final ticketID = generateTicketID();
       saveTicketToFirebase(ticketID).then((_) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Ticket Reserved with ID: $ticketID')),
         );
-        Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(builder: (context) => const MyTicket()),
-                (route) => false);
+        Navigator.pop(context);
 
         // Reload the available driver if needed
         setState(() {
@@ -140,6 +201,7 @@ class _BookTicketState extends State<BookTicket> {
       });
     }
   }
+
 
   void cancelStepper() {
     if (_currentStep > 0) {
@@ -173,6 +235,21 @@ class _BookTicketState extends State<BookTicket> {
               isActive: _currentStep == 0,
             ),
             Step(
+              title: const Text('Schedule Date'),
+              content: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ElevatedButton(
+                    onPressed: pickScheduleDate,
+                    child: const Text('Pick Schedule Date'),
+                  ),
+                  if (scheduledDate != null)
+                    Text('Scheduled Date: ${scheduledDate.toString()}'),
+                ],
+              ),
+              isActive: _currentStep == 1,
+            ),
+            Step(
               title: const Text('Seat Confirmation'),
               content: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -181,7 +258,7 @@ class _BookTicketState extends State<BookTicket> {
                   Text('Remaining Seats: $remainingSeats'),
                 ],
               ),
-              isActive: _currentStep == 1,
+              isActive: _currentStep == 2,
             ),
             Step(
               title: const Text('Ticket Confirmation'),
@@ -192,7 +269,7 @@ class _BookTicketState extends State<BookTicket> {
                   const Text('Click Continue to generate your ticket.'),
                 ],
               ),
-              isActive: _currentStep == 2,
+              isActive: _currentStep == 3,
             ),
           ],
         ),

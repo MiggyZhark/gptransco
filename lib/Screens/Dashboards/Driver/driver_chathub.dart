@@ -83,7 +83,7 @@ class DriverChatHub extends StatelessWidget {
                         return ListTile(
                           leading: driverImage.isNotEmpty
                               ? CircleAvatar(backgroundImage: NetworkImage(driverImage))
-                              : const CircleAvatar(child: Icon(Icons.person)),
+                              : const CircleAvatar(backgroundColor: Colors.blueGrey,child: Icon(size: 30,Icons.person,color: Colors.white,)),
                           title: Text(driverName),
                           onTap: () {
                             Navigator.push(
