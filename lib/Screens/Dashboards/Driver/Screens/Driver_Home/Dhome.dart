@@ -42,7 +42,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: Text(
+          title: const Text(
             'GPTransco',
             style: headerTitle,
           ),
@@ -109,7 +109,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Total Reservations'),
+                          const Text('Total Reservations'),
                           const SizedBox(height: 8),
                           Text(
                             '${widget.totalReservations}',
@@ -128,7 +128,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
+                    const Text(
                       'Notifications',
                       style: TextStyle(
                           fontSize: 18,
@@ -142,7 +142,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                             const SnackBar(content: Text('All notifications cleared')),
                           );
                         },
-                        icon: Icon(
+                        icon: const Icon(
                           size: 25,
                           Icons.clear_all,
                           color: Colors.black,
@@ -150,16 +150,16 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                   ],
                 ),
                 const SizedBox(height: 10),
-                NotificationList(),
+                const NotificationList(),
 
                 const SizedBox(height: 20),
 
                 // Reports Button
-                Container(
+                SizedBox(
                   width: double.infinity,
                   child: ElevatedButton.icon(
-                    icon: Icon(Icons.report, color: Colors.white),
-                    label: Text(
+                    icon: const Icon(Icons.report, color: Colors.white),
+                    label: const Text(
                       'Lost & Found Report',
                       style: TextStyle(color: Colors.black),
                     ),

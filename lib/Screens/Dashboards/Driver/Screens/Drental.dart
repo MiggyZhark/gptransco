@@ -70,8 +70,8 @@ class _DRentalScreenState extends State<DRentalScreen> {
   }
 
   Future<void> _pickImages() async {
-    final List<XFile>? images = await _picker.pickMultiImage();
-    if (images != null && images.length >= 3) {
+    final List<XFile> images = await _picker.pickMultiImage();
+    if (images.length >= 3) {
       setState(() {
         _selectedImages = images.take(3).toList();
       });
@@ -193,10 +193,10 @@ class _DRentalScreenState extends State<DRentalScreen> {
                       return Image.network(url, fit: BoxFit.cover);
                     }).toList(),
                   )
-                      : Center(
+                      : const Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
+                      children: [
                         Icon(Icons.add_a_photo, size: 50, color: Colors.grey),
                         Text('Upload 3 Images'),
                       ],
@@ -258,7 +258,7 @@ class _DRentalScreenState extends State<DRentalScreen> {
                   child: const Text('Save', style: TextStyle(color: Colors.white, fontSize: 14)),
                 ),
               ),
-              SizedBox(height: 25,)
+              const SizedBox(height: 25,)
             ],
           ),
         ),

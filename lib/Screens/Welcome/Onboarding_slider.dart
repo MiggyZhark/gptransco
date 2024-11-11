@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_onboarding_slider/flutter_onboarding_slider.dart';
 import '../../constants.dart';
 import '../Login/login_screen.dart';
-import '../Signup/signup_screen.dart';
 
 class OnboardingSlider extends StatelessWidget {
   const OnboardingSlider({super.key});
@@ -19,14 +18,14 @@ class OnboardingSlider extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => const SignupScreen(),
+              builder: (context) => const LoginScreen(),
             ),
           );
         },
         centerBackground: true,
         controllerColor: gpSecondaryColor,
         headerBackgroundColor: gpSecondaryColor,
-        finishButtonText: 'Register Now',
+        finishButtonText: 'Login',
         finishButtonStyle: FinishButtonStyle(
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
@@ -138,7 +137,7 @@ class OnboardingSlider extends StatelessWidget {
                   style: TextStyle(color: gpSecondaryColor),
                 ),
                 SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.15,
+                  height: MediaQuery.of(context).size.height * 0.18,
                 ),
                 const Text(
                   textAlign: TextAlign.center,
@@ -151,27 +150,6 @@ class OnboardingSlider extends StatelessWidget {
                 const Divider(
                   thickness: 1,
                   color: gpSecondaryColor,
-                ),
-                MaterialButton(
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const LoginScreen()));
-                  },
-                  height: 50,
-                  color: Colors.grey[400],
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15)),
-                  child: const Center(
-                    child: Text(
-                      "Login",
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
-                          color: Colors.black),
-                    ),
-                  ),
                 ),
               ],
             ),

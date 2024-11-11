@@ -105,7 +105,7 @@ class _PackagesScreenState extends State<PackagesScreen> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),
-          contentPadding: EdgeInsets.all(15),
+          contentPadding: const EdgeInsets.all(15),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -119,8 +119,8 @@ class _PackagesScreenState extends State<PackagesScreen> {
                     fit: BoxFit.cover,
                   ),
                 ),
-              SizedBox(height: 8),
-              Divider(height: 8),
+              const SizedBox(height: 8),
+              const Divider(height: 8),
               Text(productName,
                   style: const TextStyle(
                       fontSize: 16, fontWeight: FontWeight.bold)),
@@ -255,10 +255,10 @@ class _PackagesScreenState extends State<PackagesScreen> {
           backgroundColor: Colors.blueGrey,
           automaticallyImplyLeading: true,
           centerTitle: true,
-          title: Text('Packages', style: headerTitle),
+          title: const Text('Packages', style: headerTitle),
         ),
         body: Padding(
-          padding: EdgeInsets.all(10),
+          padding: const EdgeInsets.all(10),
           child: _userPackages.isEmpty
               ? const Center(child: Text('No packages found',style: TextStyle(fontSize: 14),))
               : ListView.builder(
@@ -312,7 +312,7 @@ class _PackagesScreenState extends State<PackagesScreen> {
                   ),
                   trailing: IconButton(
                     onPressed: () => _showPackageDialog(context, package),
-                    icon: Icon(Icons.arrow_forward),
+                    icon: const Icon(Icons.arrow_forward),
                   ),
                 ),
               );

@@ -65,9 +65,9 @@ class UsersChatHub extends StatelessWidget {
                       stream: FirebaseFirestore.instance.collection('Driver').doc(receiverUid).snapshots(),
                       builder: (context, userSnapshot) {
                         if (!userSnapshot.hasData) {
-                          return ListTile(
-                            title: const Text('Loading...'),
-                            leading: const CircleAvatar(
+                          return const ListTile(
+                            title: Text('Loading...'),
+                            leading: CircleAvatar(
                               child: Icon(Icons.person, color: Colors.black),
                             ),
                           );

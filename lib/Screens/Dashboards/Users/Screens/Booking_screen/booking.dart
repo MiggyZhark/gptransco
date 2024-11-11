@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../../../../../constants.dart';
 import 'Book_Ticket.dart';
@@ -24,12 +23,12 @@ class _BookingsScreenState extends State<BookingsScreen> {
         return AlertDialog(
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-          title: Text('Select Current Location'),
+          title: const Text('Select Current Location'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
-                title: Text('Gensan'),
+                title: const Text('Gensan'),
                 onTap: () {
                   setState(() {
                     currentLocation = 'Gensan'; // Update selected location
@@ -38,7 +37,7 @@ class _BookingsScreenState extends State<BookingsScreen> {
                 },
               ),
               ListTile(
-                title: Text('Palimbang'),
+                title: const Text('Palimbang'),
                 onTap: () {
                   setState(() {
                     currentLocation = 'Palimbang';
@@ -57,7 +56,13 @@ class _BookingsScreenState extends State<BookingsScreen> {
   // Function to show Select Destination dialog
   void showDestinationDialog(BuildContext context) {
     // List of all possible destinations
-    List<String> destinations = ['Gensan', 'Palimbang', 'Maasim', 'Maitum', 'Kiamba'];
+    List<String> destinations = [
+      'Gensan',
+      'Palimbang',
+      'Maasim',
+      'Maitum',
+      'Kiamba'
+    ];
 
     // Filter out the currentLocation from the list of destinations
     List<String> filteredDestinations = destinations
@@ -68,8 +73,9 @@ class _BookingsScreenState extends State<BookingsScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Select Destination'),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          title: const Text('Select Destination'),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: filteredDestinations.map((destination) {
@@ -88,7 +94,6 @@ class _BookingsScreenState extends State<BookingsScreen> {
       },
     );
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -130,14 +135,15 @@ class _BookingsScreenState extends State<BookingsScreen> {
               child: Column(
                 children: [
                   Padding(
-                    padding: EdgeInsets.all(25),
+                    padding: const EdgeInsets.all(25),
                     child: Container(
                       height: MediaQuery.sizeOf(context).height * 0.2,
                       decoration: BoxDecoration(
-                          color: Color.fromARGB(90, 17, 117, 103),
+                          color: const Color.fromARGB(90, 17, 117, 103),
                           borderRadius: BorderRadius.circular(25)),
                       child: Padding(
-                        padding: EdgeInsets.only(left: 30, top: 20, bottom: 20),
+                        padding: const EdgeInsets.only(
+                            left: 30, top: 20, bottom: 20),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -145,17 +151,17 @@ class _BookingsScreenState extends State<BookingsScreen> {
                               onTap: () => showCurrentLocationDialog(context),
                               child: Row(
                                 children: [
-                                  ImageIcon(
+                                  const ImageIcon(
                                       size: 30,
                                       color: gpIconColor,
                                       AssetImage(
                                           'assets/models/map-marker-home.png')),
-                                  SizedBox(
+                                  const SizedBox(
                                     width: 15,
                                   ),
                                   Text(
                                     currentLocation,
-                                    style: TextStyle(shadows: [
+                                    style: const TextStyle(shadows: [
                                       BoxShadow(
                                         color: Colors.teal,
                                         blurRadius: 3.0,
@@ -166,26 +172,26 @@ class _BookingsScreenState extends State<BookingsScreen> {
                                 ],
                               ),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 20,
                             ),
-                            Divider(
+                            const Divider(
                               indent: 30,
                               height: 5,
                               color: Colors.black,
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 20,
                             ),
                             InkWell(
                               onTap: () => showDestinationDialog(context),
                               child: Row(
                                 children: [
-                                  ImageIcon(
+                                  const ImageIcon(
                                       size: 30,
                                       color: gpIconColor,
                                       AssetImage('assets/models/marker.png')),
-                                  SizedBox(
+                                  const SizedBox(
                                     width: 15,
                                   ),
                                   Text(destination)
@@ -229,7 +235,6 @@ class _BookingsScreenState extends State<BookingsScreen> {
                                 onPressed: () {
                                   if (currentLocation != 'Current Location' &&
                                       destination != 'Select Destination') {
-                                    if (currentLocation != destination) {
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
@@ -239,14 +244,6 @@ class _BookingsScreenState extends State<BookingsScreen> {
                                           ),
                                         ),
                                       );
-                                    } else {
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        const SnackBar(
-                                            content: Text(
-                                                'Location & Destination should not be match')),
-                                      );
-                                    }
                                   } else {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
@@ -299,7 +296,8 @@ class _BookingsScreenState extends State<BookingsScreen> {
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) => MyTicket()));
+                                          builder: (context) =>
+                                              const MyTicket()));
                                 },
                                 child: const Text(
                                   'My Tickets',

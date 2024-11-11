@@ -259,7 +259,7 @@ class _ShippingScreenState extends State<ShippingScreen> {
                                     }
                                     return null;
                                   },
-                                  style: TextStyle(fontSize: 12),
+                                  style: const TextStyle(fontSize: 12),
                                 ),
                               ),
                               const SizedBox(width: 10),

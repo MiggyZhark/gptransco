@@ -11,7 +11,7 @@ class MessageScreen extends StatefulWidget {
   final String profileImage;
   final String name;
 
-  MessageScreen(
+  const MessageScreen(
       {super.key,
       required this.receiverUid,
       required this.senderUid,
@@ -94,7 +94,7 @@ class _MessageScreenState extends State<MessageScreen> {
   }
 
   String _getChatId(String uid1, String uid2) {
-    return uid1.hashCode <= uid2.hashCode ? "$uid1\_$uid2" : "$uid2\_$uid1";
+    return uid1.hashCode <= uid2.hashCode ? "${uid1}_$uid2" : "${uid2}_$uid1";
   }
 
   @override

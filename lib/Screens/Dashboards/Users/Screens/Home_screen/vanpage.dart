@@ -16,7 +16,7 @@ class VanPage extends StatelessWidget {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: Text(
+          title: const Text(
             'Van Details',
             style: headerTitle,
           ),
@@ -48,12 +48,12 @@ class VanPage extends StatelessWidget {
                   children: [
                     Text(
                       item.title,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 24,
                       ),
                     ),
-                    SizedBox(height: 8),
+                    const SizedBox(height: 8),
                     Text(
                       item.subtitle,
                       style: TextStyle(
@@ -61,17 +61,17 @@ class VanPage extends StatelessWidget {
                         color: Colors.grey[600],
                       ),
                     ),
-                    SizedBox(height: 8),
-                    Divider(),
-                    SizedBox(height: 8),
-                    Text(
+                    const SizedBox(height: 8),
+                    const Divider(),
+                    const SizedBox(height: 8),
+                    const Text(
                       'Vehicle Information',
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    SizedBox(height: 8),
+                    const SizedBox(height: 8),
                     VehicleInfoRow(
                       icon: Icons.directions_car,
                       label: 'Plate Number',
@@ -158,7 +158,7 @@ class VehicleInfoRow extends StatelessWidget {
   final String label;
   final String value;
 
-  const VehicleInfoRow({
+  const VehicleInfoRow({super.key, 
     required this.icon,
     required this.label,
     required this.value,
@@ -171,19 +171,19 @@ class VehicleInfoRow extends StatelessWidget {
       child: Row(
         children: [
           Icon(icon, color: Colors.blueGrey, size: 28),
-          SizedBox(width: 12),
+          const SizedBox(width: 12),
           Text(
             '$label:',
-            style: TextStyle(
+            style: const TextStyle(
               fontWeight: FontWeight.w600,
               fontSize: 16,
             ),
           ),
-          SizedBox(width: 8),
+          const SizedBox(width: 8),
           Expanded(
             child: Text(
               value,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 16,
                 color: Colors.black87,
               ),

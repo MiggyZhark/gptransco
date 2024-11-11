@@ -16,12 +16,12 @@ class Passengers extends StatelessWidget {
       // If no user is signed in, show an error message
       return Scaffold(
         appBar: AppBar(
-          title: Text(
+          title: const Text(
             'Reservation',
             style: headerTitle,
           ),
         ),
-        body: Center(
+        body: const Center(
           child: Text('No Driver signed in'),
         ),
       );
@@ -29,7 +29,7 @@ class Passengers extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Reservation',
           style: headerTitle,
         ),
@@ -43,15 +43,15 @@ class Passengers extends StatelessWidget {
             .get(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
 
           if (snapshot.hasError) {
-            return Center(child: Text('Error fetching reservations'));
+            return const Center(child: Text('Error fetching reservations'));
           }
 
           if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-            return Center(child: Text('No reservations yet'));
+            return const Center(child: Text('No reservations yet'));
           }
 
           // Extract 'ticketID' and 'createdAt' from each document

@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
 
 class LyricDisplay extends StatefulWidget {
+  const LyricDisplay({super.key});
+
   @override
   _LyricDisplayState createState() => _LyricDisplayState();
 }
@@ -59,22 +61,22 @@ class _LyricDisplayState extends State<LyricDisplay> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Blue - Yung Kai", style: TextStyle(color: Colors.white)),
+        title: const Text("Blue - Yung Kai", style: TextStyle(color: Colors.white)),
       ),
       body: Container(height: double.infinity,
         width: double.infinity,
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
             image: DecorationImage(image: AssetImage("assets/test/anime.jpg"),fit: BoxFit.cover)),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10.0,vertical: 180),
           child: FadeIn(
             key: ValueKey(currentLyricIndex),
             // ensures a new animation for each lyric line
-            duration: Duration(milliseconds: 800),
+            duration: const Duration(milliseconds: 800),
             // Customize fade-in duration as needed
             child: Text(
               lyrics[currentLyricIndex]['line'],
-              style: TextStyle(fontSize: 24, color: Colors.blue),
+              style: const TextStyle(fontSize: 24, color: Colors.blue),
               textAlign: TextAlign.center,
             ),
           ),
