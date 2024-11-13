@@ -7,7 +7,7 @@ class BookingsScreen extends StatefulWidget {
   const BookingsScreen({super.key});
 
   @override
-  _BookingsScreenState createState() => _BookingsScreenState();
+  State<BookingsScreen> createState() => _BookingsScreenState();
 }
 
 class _BookingsScreenState extends State<BookingsScreen> {
@@ -97,224 +97,226 @@ class _BookingsScreenState extends State<BookingsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: gpBottomNavigationColorDark,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        centerTitle: true,
-        title: const Text(
-          'Booking',
-          style: headerTitle,
-        ),
-      ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ClipRRect(
-                  child: Image.asset(
-                    'assets/images/Van-driver.png',
-                    height: MediaQuery.sizeOf(context).height * 0.25,
-                  ),
-                ),
-              ],
-            ),
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: gpBottomNavigationColorDark,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          centerTitle: true,
+          title: const Text(
+            'Booking',
+            style: headerTitle,
           ),
-          Expanded(
-              child: Container(
-            width: MediaQuery.of(context).size.width * 1,
-            decoration: const BoxDecoration(
-                color: gpPrimaryColor,
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(45),
-                    topRight: Radius.circular(45))),
-            child: SingleChildScrollView(
+        ),
+        body: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(10.0),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.all(25),
-                    child: Container(
-                      height: MediaQuery.sizeOf(context).height * 0.2,
-                      decoration: BoxDecoration(
-                          color: const Color.fromARGB(90, 17, 117, 103),
-                          borderRadius: BorderRadius.circular(25)),
-                      child: Padding(
-                        padding: const EdgeInsets.only(
-                            left: 30, top: 20, bottom: 20),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            InkWell(
-                              onTap: () => showCurrentLocationDialog(context),
-                              child: Row(
-                                children: [
-                                  const ImageIcon(
-                                      size: 30,
-                                      color: gpIconColor,
-                                      AssetImage(
-                                          'assets/models/map-marker-home.png')),
-                                  const SizedBox(
-                                    width: 15,
-                                  ),
-                                  Text(
-                                    currentLocation,
-                                    style: const TextStyle(shadows: [
-                                      BoxShadow(
-                                        color: Colors.teal,
-                                        blurRadius: 3.0,
-                                        spreadRadius: 6.0,
-                                      ),
-                                    ]),
-                                  )
-                                ],
-                              ),
-                            ),
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            const Divider(
-                              indent: 30,
-                              height: 5,
-                              color: Colors.black,
-                            ),
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            InkWell(
-                              onTap: () => showDestinationDialog(context),
-                              child: Row(
-                                children: [
-                                  const ImageIcon(
-                                      size: 30,
-                                      color: gpIconColor,
-                                      AssetImage('assets/models/marker.png')),
-                                  const SizedBox(
-                                    width: 15,
-                                  ),
-                                  Text(destination)
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 10.0),
-                    child: Center(
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(5),
-                        child: Stack(
-                          children: <Widget>[
-                            Positioned.fill(
-                              child: Container(
-                                decoration: const BoxDecoration(
-                                  gradient: LinearGradient(
-                                    colors: <Color>[
-                                      Color(0xFF07917C),
-                                      Color(0xFF0CB39B),
-                                      Color(0xFF06BAA4)
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 5.0),
-                              child: TextButton(
-                                style: TextButton.styleFrom(
-                                  textStyle: const TextStyle(fontSize: 14),
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 15, horizontal: 70),
-                                ),
-                                onPressed: () {
-                                  if (currentLocation != 'Current Location' &&
-                                      destination != 'Select Destination') {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => BookTicket(
-                                            currentLocation: currentLocation,
-                                            destination: destination,
-                                          ),
-                                        ),
-                                      );
-                                  } else {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                          content: Text(
-                                              'Please select a Location & Destination')),
-                                    );
-                                  }
-                                },
-                                child: const Text(
-                                  'Get Reservation',
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 20.0),
-                    child: Center(
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(5),
-                        child: Stack(
-                          children: <Widget>[
-                            Positioned.fill(
-                              child: Container(
-                                decoration: const BoxDecoration(
-                                  gradient: LinearGradient(
-                                    colors: <Color>[
-                                      Color(0xFF7D878E),
-                                      Color(0xFF85949A),
-                                      Color(0xFF7696A6)
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 5.0),
-                              child: TextButton(
-                                style: TextButton.styleFrom(
-                                  textStyle: const TextStyle(fontSize: 14),
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 15, horizontal: 70),
-                                ),
-                                onPressed: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              const MyTicket()));
-                                },
-                                child: const Text(
-                                  'My Tickets',
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
+                  ClipRRect(
+                    child: Image.asset(
+                      'assets/images/Van-driver.png',
+                      height: MediaQuery.sizeOf(context).height * 0.25,
                     ),
                   ),
                 ],
               ),
             ),
-          ))
-        ],
+            Expanded(
+                child: Container(
+              width: MediaQuery.of(context).size.width * 1,
+              decoration: const BoxDecoration(
+                  color: gpPrimaryColor,
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(45),
+                      topRight: Radius.circular(45))),
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(25),
+                      child: Container(
+                        height: MediaQuery.sizeOf(context).height * 0.2,
+                        decoration: BoxDecoration(
+                            color: const Color.fromARGB(90, 17, 117, 103),
+                            borderRadius: BorderRadius.circular(25)),
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                              left: 30, top: 20, bottom: 20),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              InkWell(
+                                onTap: () => showCurrentLocationDialog(context),
+                                child: Row(
+                                  children: [
+                                    const ImageIcon(
+                                        size: 30,
+                                        color: gpIconColor,
+                                        AssetImage(
+                                            'assets/models/map-marker-home.png')),
+                                    const SizedBox(
+                                      width: 15,
+                                    ),
+                                    Text(
+                                      currentLocation,
+                                      style: const TextStyle(shadows: [
+                                        BoxShadow(
+                                          color: Colors.teal,
+                                          blurRadius: 3.0,
+                                          spreadRadius: 6.0,
+                                        ),
+                                      ]),
+                                    )
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 20,
+                              ),
+                              const Divider(
+                                indent: 30,
+                                height: 5,
+                                color: Colors.black,
+                              ),
+                              const SizedBox(
+                                height: 20,
+                              ),
+                              InkWell(
+                                onTap: () => showDestinationDialog(context),
+                                child: Row(
+                                  children: [
+                                    const ImageIcon(
+                                        size: 30,
+                                        color: gpIconColor,
+                                        AssetImage('assets/models/marker.png')),
+                                    const SizedBox(
+                                      width: 15,
+                                    ),
+                                    Text(destination)
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10.0),
+                      child: Center(
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(5),
+                          child: Stack(
+                            children: <Widget>[
+                              Positioned.fill(
+                                child: Container(
+                                  decoration: const BoxDecoration(
+                                    gradient: LinearGradient(
+                                      colors: <Color>[
+                                        Color(0xFF07917C),
+                                        Color(0xFF0CB39B),
+                                        Color(0xFF06BAA4)
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 5.0),
+                                child: TextButton(
+                                  style: TextButton.styleFrom(
+                                    textStyle: const TextStyle(fontSize: 14),
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 15, horizontal: 70),
+                                  ),
+                                  onPressed: () {
+                                    if (currentLocation != 'Current Location' &&
+                                        destination != 'Select Destination') {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => BookTicket(
+                                              currentLocation: currentLocation,
+                                              destination: destination,
+                                            ),
+                                          ),
+                                        );
+                                    } else {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(
+                                            content: Text(
+                                                'Please select a Location & Destination')),
+                                      );
+                                    }
+                                  },
+                                  child: const Text(
+                                    'Get Reservation',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 20.0),
+                      child: Center(
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(5),
+                          child: Stack(
+                            children: <Widget>[
+                              Positioned.fill(
+                                child: Container(
+                                  decoration: const BoxDecoration(
+                                    gradient: LinearGradient(
+                                      colors: <Color>[
+                                        Color(0xFF7D878E),
+                                        Color(0xFF85949A),
+                                        Color(0xFF7696A6)
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 5.0),
+                                child: TextButton(
+                                  style: TextButton.styleFrom(
+                                    textStyle: const TextStyle(fontSize: 14),
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 15, horizontal: 70),
+                                  ),
+                                  onPressed: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                const MyTicket()));
+                                  },
+                                  child: const Text(
+                                    'My Tickets',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ))
+          ],
+        ),
       ),
     );
   }

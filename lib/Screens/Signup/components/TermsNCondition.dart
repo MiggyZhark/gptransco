@@ -1,19 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../../../constants.dart';
 
 class TermsAndConditionsScreen extends StatelessWidget {
   const TermsAndConditionsScreen({super.key});
 
-  // Method to open email client
-  void _contactUs() async {
-    const email = 'mailto:joenardjann@gmail.com?subject=Inquiry&body=Hello';
-    if (await canLaunchUrl(Uri.parse(email))) {
-      await launchUrl(Uri.parse(email));
-    } else {
-      debugPrint("Could not launch email client");
-    }
-  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +61,7 @@ class TermsAndConditionsScreen extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             ElevatedButton.icon(
-              onPressed: _contactUs,
+              onPressed: (){},
               icon: const Icon(Icons.mail,color: Colors.white,),
               label: const Text('Contact Us',style: TextStyle(color: Colors.white),),
               style: ElevatedButton.styleFrom(

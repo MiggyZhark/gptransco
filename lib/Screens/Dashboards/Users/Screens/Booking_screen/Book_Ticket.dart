@@ -24,6 +24,7 @@ class BookTicket extends StatefulWidget {
 
 class _BookTicketState extends State<BookTicket> {
   int _currentStep = 0;
+  String driverName = "";
   String driverPlateNo = "";
   String assignedDriverID = "";
   int remainingSeats = 18;
@@ -73,6 +74,7 @@ class _BookTicketState extends State<BookTicket> {
           remainingSeats = 18 - passengerCount;
           driverMobileNumber = driver['mobileNumber']; // Fetch mobile number
           isDriverLoaded = true;
+          driverName = driver['driverName'];
         });
         return;
       }
@@ -119,9 +121,6 @@ class _BookTicketState extends State<BookTicket> {
       }
     }
   }
-
-
-
 
   // Generate a unique ticket ID
   String generateTicketID() {
@@ -199,6 +198,10 @@ class _BookTicketState extends State<BookTicket> {
         'expirationDate': expirationDate,
         'status': 'Waiting',
         'Receipt': imageUrl, // Save the download URL here
+        'driverUID':assignedDriverID,
+        'driverName':driverName,
+        'userUID':userUID,
+        'userProfile':'assets/models/booking.png'
       });
     }
   }

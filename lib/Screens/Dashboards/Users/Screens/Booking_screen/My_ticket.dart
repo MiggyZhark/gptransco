@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../../../../constants.dart';
+import 'ticket_details.dart';
 
 class MyTicket extends StatelessWidget {
   const MyTicket({super.key});
@@ -44,7 +45,6 @@ class MyTicket extends StatelessWidget {
                 ),
               );
             }
-
             final tickets = snapshot.data!.docs;
 
             return ListView.builder(
@@ -53,11 +53,8 @@ class MyTicket extends StatelessWidget {
               itemBuilder: (context, index) {
                 final ticketData = tickets[index].data() as Map<String, dynamic>;
                 return TicketCard(
-                  currentLocation: ticketData['currentLocation'] ?? 'N/A',
-                  destination: ticketData['destination'] ?? 'N/A',
-                  ticketID: ticketData['ticketID'] ?? 'N/A',
-                  plateNumber: ticketData['plateNumber'] ?? 'N/A',
-                  createdAt: (ticketData['createdAt'] as Timestamp?)?.toDate(),
+                  ticketData: ticketData,
+                  ticketID: tickets[index].id,
                 );
               },
             );
@@ -72,19 +69,13 @@ class MyTicket extends StatelessWidget {
 }
 
 class TicketCard extends StatelessWidget {
-  final String currentLocation;
-  final String destination;
+  final Map<String, dynamic> ticketData;
   final String ticketID;
-  final String plateNumber;
-  final DateTime? createdAt;
 
   const TicketCard({
     super.key,
-    required this.currentLocation,
-    required this.destination,
+    required this.ticketData,
     required this.ticketID,
-    required this.plateNumber,
-    this.createdAt,
   });
 
   @override
@@ -101,7 +92,7 @@ class TicketCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Ticket ID: $ticketID',
+              'Ticket ID: ${ticketData['ticketID'] ?? 'N/A'}',
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 16,
@@ -112,22 +103,8 @@ class TicketCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('From: $currentLocation'),
-                    Text('To: $destination'),
-                  ],
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Plate No: $plateNumber'),
-                    Text(
-                      'Date: ${createdAt != null ? "${createdAt!.day}/${createdAt!.month}/${createdAt!.year}" : 'N/A'}',
-                    ),
-                  ],
-                ),
+                Text('From: ${ticketData['currentLocation'] ?? 'N/A'}'),
+                Text('To: ${ticketData['destination'] ?? 'N/A'}'),
               ],
             ),
             const SizedBox(height: 10),
@@ -135,7 +112,12 @@ class TicketCard extends StatelessWidget {
               alignment: Alignment.centerRight,
               child: TextButton(
                 onPressed: () {
-                  // Implement any action, e.g., showing more details or navigating to another page
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => TicketDetails(ticketData: ticketData),
+                    ),
+                  );
                 },
                 child: const Text(
                   'View Details',
