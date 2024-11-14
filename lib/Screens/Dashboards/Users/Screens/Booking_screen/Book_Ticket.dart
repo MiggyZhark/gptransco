@@ -396,9 +396,9 @@ class _BookTicketState extends State<BookTicket> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
+                        const Text(
                           'Please pay via GCash to the driver’s mobile number:',
-                          style: const TextStyle(fontWeight: FontWeight.bold),
+                          style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                         Text(
                           'GCash Number: $driverMobileNumber',

@@ -80,7 +80,7 @@ class TicketCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
+    return Card(color: Colors.blue[50],
       margin: const EdgeInsets.only(bottom: 15),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10),
@@ -101,13 +101,13 @@ class TicketCard extends StatelessWidget {
             ),
             const SizedBox(height: 10),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('From: ${ticketData['currentLocation'] ?? 'N/A'}'),
-                Text('To: ${ticketData['destination'] ?? 'N/A'}'),
+                const Icon(Icons.info,color: Colors.blue,),
+                const SizedBox(width: 5,),
+                Text('Status: ${ticketData['status'] ?? 'N/A'}',style: const TextStyle(fontSize: 14,color: Colors.blue),),
               ],
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 5),
             Align(
               alignment: Alignment.centerRight,
               child: TextButton(

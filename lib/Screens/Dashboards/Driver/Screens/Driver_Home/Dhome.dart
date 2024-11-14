@@ -5,8 +5,6 @@ import 'package:intl/intl.dart';
 import '../../../../../constants.dart';
 import 'LNF_Screen.dart';
 
-
-
 class DriverHomeScreen extends StatefulWidget {
   final Map<String, dynamic> userProfileData;
   final int totalReservations;
@@ -137,9 +135,98 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                     ),
                     IconButton(
                         onPressed: () async{
-                          await deleteAllNotifications();
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('All notifications cleared')),
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return Center(
+                                // Centering the dialog to make it smaller
+                                child: Container(
+                                  constraints: const BoxConstraints(
+                                      maxWidth: 400), // Limit the width
+                                  child: AlertDialog(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius:
+                                      BorderRadius.circular(10),
+                                    ),
+                                    title: const Text(
+                                      'Clear Notification',
+                                      style: TextStyle(
+                                        color: gpBottomNavigationColor,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize:
+                                        12, // Set header font size to 12
+                                      ),
+                                    ),
+                                    content: const Text(
+                                      'Are you sure you want to clear all the Notifications?',
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize:
+                                        12, // Set content font size to 10
+                                      ),
+                                    ),
+                                    actions: [
+                                      Row(
+                                        mainAxisAlignment:
+                                        MainAxisAlignment.end,
+                                        children: [
+                                          ElevatedButton(
+                                            style:
+                                            ElevatedButton.styleFrom(
+                                              padding: const EdgeInsets
+                                                  .symmetric(
+                                                  horizontal: 12,
+                                                  vertical: 10),
+                                              minimumSize: Size
+                                                  .zero, // Remove default minimum size
+                                              side: const BorderSide(
+                                                  color:
+                                                  gpBottomNavigationColor),
+                                              textStyle: const TextStyle(
+                                                  fontSize:
+                                                  12), // Set button text size to 10
+                                            ),
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                            child: const Text('Cancel',
+                                                style: TextStyle(
+                                                    color: Colors.black)),
+                                          ),
+                                          const SizedBox(width: 10),
+                                          ElevatedButton(
+                                            style:
+                                            ElevatedButton.styleFrom(
+                                              padding: const EdgeInsets
+                                                  .symmetric(
+                                                  horizontal: 12,
+                                                  vertical: 10),
+                                              minimumSize: Size
+                                                  .zero, // Remove default minimum size
+                                              backgroundColor:
+                                              gpBottomNavigationColor,
+                                              textStyle: const TextStyle(
+                                                  fontSize:
+                                                  12), // Set button text size to 10
+                                            ),
+                                            onPressed: () async {
+                                              await deleteAllNotifications();
+                                              Navigator.pop(
+                                                  context); // Close the dialog// Close the modal bottom sheet
+                                            },
+                                            child: const Text(
+                                              'Yes',
+                                              style: TextStyle(
+                                                  color: Colors.white),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
                           );
                         },
                         icon: const Icon(
@@ -199,6 +286,7 @@ class NotificationList extends StatefulWidget {
 
 class _NotificationListState extends State<NotificationList> {
   final User? currentUser = FirebaseAuth.instance.currentUser;
+
 
   Future<List<Map<String, dynamic>>> fetchNotifications() async {
     if (currentUser == null) return [];

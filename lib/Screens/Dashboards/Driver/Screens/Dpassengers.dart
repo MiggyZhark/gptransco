@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart'; // Import the intl package for date formatting
 import '../../../../constants.dart';
+import 'Pticket.dart';
 
 class Passengers extends StatelessWidget {
   const Passengers({super.key});
@@ -59,6 +60,13 @@ class Passengers extends StatelessWidget {
             return {
               'ticketID': doc['ticketID'] as String,
               'createdAt': doc['createdAt'] as Timestamp,
+              'userUID': doc['userUID'] as String,
+              'Receipt': doc['Receipt'] as String,
+              'status': doc['status'] as String,
+              'scheduledDate': doc['scheduledDate'] as Timestamp,
+              'expirationDate': doc['expirationDate'] as Timestamp,
+              'destination': doc['destination'] as String,
+              'currentLocation': doc['currentLocation'] as String
             };
           }).toList();
 
@@ -70,6 +78,7 @@ class Passengers extends StatelessWidget {
                   .format(tickets[index]['createdAt'].toDate());
 
               return Card(
+                color: Colors.grey[50],
                 elevation: 4,
                 margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                 shape: RoundedRectangleBorder(
@@ -92,8 +101,20 @@ class Passengers extends StatelessWidget {
                   trailing: IconButton(
                     icon: const Icon(Icons.info, color: Colors.blueGrey),
                     onPressed: () {
-                      // Navigate to MessageScreen with the ticketID
-
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => PTicketsScreen(
+                            userUID: tickets[index]['userUID'],
+                            ticketID: tickets[index]['ticketID'],
+                            receipt: tickets[index]['Receipt'],
+                            scheduledDate: tickets[index]['scheduledDate'],
+                            expirationDate: tickets[index]['expirationDate'],
+                            destination: tickets[index]['destination'],
+                            currentLocation: tickets[index]['currentLocation'],
+                          ),
+                        ),
+                      );
                     },
                   ),
                 ),

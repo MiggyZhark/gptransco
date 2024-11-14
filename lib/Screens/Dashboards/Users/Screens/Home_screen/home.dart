@@ -1,5 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import '../../../../../constants.dart';
+import 'Notification_screen.dart';
 import 'homecard_slider.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -61,16 +63,61 @@ class HomeScreen extends StatelessWidget {
                   ),
                 ],
               ),
-              IconButton(
-                onPressed: () {
-                  // Handle notification press
+              StreamBuilder(
+                stream: FirebaseFirestore.instance
+                    .collection('users')
+                    .doc(userProfileData['uid'])
+                    .collection('Notification')
+                    .snapshots(),
+                builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Icon(Icons.notifications, color: Colors.black87, size: 28);
+                  }
+
+                  int notificationCount = 0;
+                  if (snapshot.hasData) {
+                    notificationCount = snapshot.data!.docs.length;
+                  }
+
+                  return Stack(
+                    children: [
+                      IconButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => NotificationScreen(
+                                userId: userProfileData['uid'],
+                              ),
+                            ),
+                          );
+                        },
+                        icon: const Icon(Icons.notifications, color: Colors.black87, size: 28),
+                      ),
+                      if (notificationCount > 0)
+                        Positioned(
+                          right: 0,
+                          top: 0,
+                          child: Container(
+                            padding: const EdgeInsets.all(5),
+                            decoration: const BoxDecoration(
+                              color: Colors.red,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Text(
+                              notificationCount.toString(),
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
+                  );
                 },
-                icon: const Icon(
-                  Icons.notifications,
-                  color: Colors.black87,
-                  size: 28,
-                ),
-              )
+              ),
             ],
           ),
         ),

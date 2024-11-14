@@ -4,8 +4,6 @@ import '../../../constants.dart';
 class TermsAndConditionsScreen extends StatelessWidget {
   const TermsAndConditionsScreen({super.key});
 
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -60,14 +58,6 @@ class TermsAndConditionsScreen extends StatelessWidget {
               'We reserve the right to update these Terms at any time. Continued use of the Service following any changes constitutes your acceptance of the revised Terms.',
             ),
             const SizedBox(height: 20),
-            ElevatedButton.icon(
-              onPressed: (){},
-              icon: const Icon(Icons.mail,color: Colors.white,),
-              label: const Text('Contact Us',style: TextStyle(color: Colors.white),),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: gpBottomNavigationColorDark,
-              ),
-            ),
           ],
         ),
       ),
