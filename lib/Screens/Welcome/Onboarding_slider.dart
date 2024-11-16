@@ -107,7 +107,7 @@ class OnboardingSlider extends StatelessWidget {
                 ),
                 const Text(
                   textAlign: TextAlign.justify,
-                  'Book a van and driver with GPTransco for your moves, deliveries, or trips. '
+                  'Book a reservation and rent with GPTransco for your trips or travel. '
                   'Choose the right van and enjoy a hassle-free experience.',
                   style: TextStyle(color: gpSecondaryColor),
                 ),
@@ -133,7 +133,7 @@ class OnboardingSlider extends StatelessWidget {
                 ),
                 const Text(
                   textAlign: TextAlign.justify,
-                  'Send packages easily with GPTransco. Post your package details, and a driver will pick it up and deliver it safely to the destination of the chosen Terminal.',
+                  'Send packages easily with GPTransco. Post your package details, and the dispatcher will assign it on designated van and a driver will pick it up and deliver it safely to the destination of the chosen Terminal.',
                   style: TextStyle(color: gpSecondaryColor),
                 ),
                 SizedBox(

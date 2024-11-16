@@ -22,7 +22,7 @@ class _DRentalScreenState extends State<DRentalScreen> {
   String? plateNumber, fuelType, vehicleColor, gender, strictedRules, price;
   int? totalSeats;
   bool? availability;
-  bool _isLoading = true;
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -83,10 +83,12 @@ class _DRentalScreenState extends State<DRentalScreen> {
   }
 
   Future<void> _saveVehicleDetails() async {
+    showLoadingDialog(context);
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return;
 
     if (_selectedImages == null || _selectedImages!.length < 3) {
+      hideLoadingDialog(context);
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please upload 3 images before saving')),
       );
@@ -99,7 +101,7 @@ class _DRentalScreenState extends State<DRentalScreen> {
         XFile image = _selectedImages![i];
         Reference storageRef = FirebaseStorage.instance
             .ref()
-            .child('vehicle_images/${user.uid}_${DateTime.now().millisecondsSinceEpoch}_$i.jpg');
+            .child('vehicle_images/${user.uid}/${user.uid}_${DateTime.now().millisecondsSinceEpoch}_$i.jpg');
         await storageRef.putFile(File(image.path));
         String downloadUrl = await storageRef.getDownloadURL();
         imageUrls.add(downloadUrl);
@@ -126,7 +128,7 @@ class _DRentalScreenState extends State<DRentalScreen> {
         _storedImageUrls = imageUrls;
         _selectedImages = [];
       });
-
+      hideLoadingDialog(context);
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Vehicle details saved successfully')),
       );

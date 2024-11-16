@@ -59,7 +59,6 @@ class _PTicketsScreenState extends State<PTicketsScreen> {
       snackBar('User not logged in');
       return;
     }
-
     try {
       // Define Firestore document references
       final driverDocRef = FirebaseFirestore.instance

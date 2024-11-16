@@ -12,7 +12,7 @@ class PackagesScreen extends StatefulWidget {
 }
 
 class _PackagesScreenState extends State<PackagesScreen> {
-  List<Map<String, dynamic>> _userPackages = [];
+  final List<Map<String, dynamic>> _userPackages = [];
 
   @override
   void initState() {
@@ -26,6 +26,9 @@ class _PackagesScreenState extends State<PackagesScreen> {
 
     final userId = user.uid;
     final terminalCollections = ['Palimbang', 'Gensan'];
+
+    // Clear the existing packages list before fetching new data
+    _userPackages.clear();
 
     for (String terminal in terminalCollections) {
       FirebaseFirestore.instance
@@ -55,13 +58,14 @@ class _PackagesScreenState extends State<PackagesScreen> {
           return bTimestamp!.compareTo(aTimestamp!);
         });
 
-        // Update the state to reflect new packages
+        // Update the state with accumulated packages
         setState(() {
-          _userPackages = packages;
+          _userPackages.addAll(packages);
         });
       });
     }
   }
+
 
   void scaffoldSnackBar (String message){
     ScaffoldMessenger.of(context).showSnackBar(

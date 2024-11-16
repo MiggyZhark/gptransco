@@ -1,72 +1,98 @@
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
-import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:gptransco/Screens/Dashboards/Dispatcher/Screens/Dispatcher_Home_Screen.dart';
 import 'package:gptransco/Screens/Dashboards/Dispatcher/Screens/Dispatcher_Profile.dart';
-import '../../../Services/firebase_database.dart';
-import 'Screens/Dispatcher_Home_Scree.dart';
+import '../../../../Services/firebase_database.dart';
+import 'Screens/Dispatcher_Booking_Screen.dart';
+import 'Screens/Shipping_Screen.dart';
+import 'dispatcher_chathub.dart';
+
 
 class DispatcherDashboard extends StatefulWidget {
   const DispatcherDashboard({super.key});
 
   @override
-  State<DispatcherDashboard> createState() => _DispatcherDashboardState();
+  State<DispatcherDashboard> createState() => _DriverDashboardState();
 }
 
-class _DispatcherDashboardState extends State<DispatcherDashboard> {
+class _DriverDashboardState extends State<DispatcherDashboard> {
+  final Database _database = Database();
+  Map<String, dynamic>? driverProfileData;
+  int totalReservations = 0;
+
   var iconList = [
     Icons.messenger,
-    Icons.book_online,
     Icons.local_shipping,
+    Icons.list_alt,
     Icons.person,
   ];
 
-  int _currentIndex = -1; // Initial index set to -1, representing HomeScreen
-  final Database _database = Database(); // Instantiate the database service
-  Map<String, dynamic>? dispatcherProfileData;
-
-  // List of screens for each tab
+  int _currentIndex = -1;
   final List<Widget> _screens = [
-    //const ChatHub(),
-    //const Dispatcher_Booking(),
-    //const Dispatcher_Shipping(),
+    const DispatcherChatHub(),
+    const DispatcherBookingScreen(),
+    const DispatcherShipping(),
   ];
 
   @override
   void initState() {
     super.initState();
-    getCurrentUserProfile(); // Pre-fetch user profile data on initialization
+    getCurrentUserProfile(); // Fetch driver profile data
+    fetchTotalReservations(); // Fetch total reservations
   }
 
-  // Method to fetch user profile data
+  // Fetch the driver profile data
   Future<void> getCurrentUserProfile() async {
     User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       Map<String, dynamic>? data = await _database.getDriverProfileData(user.uid);
       setState(() {
-        dispatcherProfileData = data;
+        driverProfileData = data;
       });
+    }
+  }
+
+  // Fetch the total reservations count
+  Future<void> fetchTotalReservations() async {
+    try {
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        final querySnapshot = await FirebaseFirestore.instance
+            .collection('Driver')
+            .doc(user.uid)
+            .collection('Passenger')
+            .get();
+
+        setState(() {
+          totalReservations = querySnapshot.size;
+        });
+      }
+    } catch (e) {
+      print('Error fetching reservations: $e');
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    // Show loading indicator if userProfileData is not yet loaded
-    if (dispatcherProfileData == null) {
+    if (driverProfileData == null) {
       return const Scaffold(
         body: Center(child: CircularProgressIndicator()),
       );
     }
 
-    // Home screen for the FAB with userProfileData
-    final Widget homeScreen = DispatcherHomeScreen(userProfileData: dispatcherProfileData!);
+    final Widget homeScreen = DispatcherHomeScreen(
+      userProfileData: driverProfileData!,
+    );
 
     return SafeArea(
       child: Scaffold(
-        body: _currentIndex == -1 ? homeScreen : _screens[_currentIndex], // Show home screen or selected tab
+        body: _currentIndex == -1 ? homeScreen : _screens[_currentIndex],
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             setState(() {
-              _currentIndex = -1; // Set to -1 to represent the Home screen
+              _currentIndex = -1;
             });
           },
           backgroundColor: Colors.black87,
@@ -83,23 +109,21 @@ class _DispatcherDashboardState extends State<DispatcherDashboard> {
           inactiveColor: Colors.white,
           backgroundColor: Colors.black87,
           icons: iconList,
-          activeIndex: _currentIndex == -1 ? -1 : _currentIndex, // Ensure FAB is treated separately
+          activeIndex: _currentIndex,
           gapLocation: GapLocation.center,
           notchSmoothness: NotchSmoothness.softEdge,
           onTap: (index) {
             setState(() {
-              if (index == 3) { // If the profile tab is tapped
-                if (dispatcherProfileData != null) {
-                  Navigator.push(context, MaterialPageRoute(builder: (context)=> DispatcherProfileScreen(dispatcherProfileData: dispatcherProfileData!)));
-                  //Dispatcher Profile
-                } else {
-                  // Handle loading state or error if data is not available
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Profile data is still loading.')),
-                  );
-                }
+              if (index == 3) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => DispatcherProfileScreen(
+                        dispatcherProfileData: driverProfileData!),
+                  ),
+                );
               } else {
-                _currentIndex = index; // Update the index based on tab selection, except for Profile
+                _currentIndex = index;
               }
             });
           },

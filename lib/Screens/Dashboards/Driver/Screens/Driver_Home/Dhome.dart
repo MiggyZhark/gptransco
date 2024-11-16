@@ -70,7 +70,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                         text: TextSpan(
                           style: const TextStyle(
                             color: Colors.black,
-                            fontSize: 18,
+                            fontSize: 14,
                           ),
                           children: <TextSpan>[
                             const TextSpan(
@@ -111,7 +111,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                           const SizedBox(height: 8),
                           Text(
                             '${widget.totalReservations}',
-                            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                           ),
                           const SizedBox(height: 8),
                         ],
@@ -129,7 +129,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                     const Text(
                       'Notifications',
                       style: TextStyle(
-                          fontSize: 18,
+                          fontSize: 14,
                           fontWeight: FontWeight.bold,
                           color: Colors.black87),
                     ),

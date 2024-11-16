@@ -29,14 +29,8 @@ class _ShippingScreenState extends State<ShippingScreen> {
   final ImagePicker _picker = ImagePicker();
 
   final List<String> sensitivityOptions = ['True', 'False'];
-  final List<String> destinationOptions = [
-    'Palimbang',
-    'Maitum',
-    'Kiamba',
-    'Maasim',
-    'Gensan'
-  ];
-  final List<String> terminalOptions = ['Palimbang', 'Gensan'];
+  final List<String> allLocations = ['Palimbang', 'Gensan'];
+  List<String> destinationOptions = ['Palimbang', 'Gensan'];
 
   void _handleImageSelected(File? selectedImage) {
     setState(() {
@@ -44,6 +38,20 @@ class _ShippingScreenState extends State<ShippingScreen> {
       _isImageSelected = selectedImage != null;
     });
   }
+
+  void _updateDestinationOptions() {
+    // Remove the selected terminal from the destination list
+    setState(() {
+      destinationOptions =
+          allLocations.where((location) => location != _selectedTerminal).toList();
+
+      // Reset the selected destination if it matches the terminal
+      if (_selectedDestination == _selectedTerminal) {
+        _selectedDestination = destinationOptions.first;
+      }
+    });
+  }
+
 
   Future<void> _pickImage() async {
     showDialog(
@@ -110,7 +118,7 @@ class _ShippingScreenState extends State<ShippingScreen> {
     showLoadingDialog(context);
     if (!_isImageSelected || _selectedImage == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select an image first')),
+        const SnackBar(content: Text('Please select an receipt first')),
       );
       hideLoadingDialog(context);
       return;
@@ -152,6 +160,19 @@ class _ShippingScreenState extends State<ShippingScreen> {
         'imageUrl': imageUrl,
         'packageId': packageId,
         'status': 'Pending',
+        'userUID':user.uid,
+      });
+
+      await FirebaseFirestore.instance
+          .collection('shippings') // Main collection
+          .doc(terminalCollection) // Terminal as a sub-document
+          .collection(
+          'notification') // Sub-collection for packages under each terminal
+          .doc(packageId) // Unique package document
+          .set({
+        'Title':'Package Posted',
+        'message':'New package posted in $_selectedTerminal terminal',
+        'createdAt': timestamp,
       });
 
       // Notify user of successful save
@@ -209,7 +230,7 @@ class _ShippingScreenState extends State<ShippingScreen> {
                       : null,
                 ),
                 child: _selectedImage == null
-                    ? const Icon(Icons.add_a_photo,
+                    ? const Icon(Icons.receipt,
                     size: 50, color: Colors.grey)
                     : null,
               ),
@@ -294,19 +315,20 @@ class _ShippingScreenState extends State<ShippingScreen> {
                           // Second row: Location and Price
                           Row(
                             children: [
-                              // Location Dropdown
+                              // Terminal Dropdown
                               Expanded(
                                 flex: 2,
                                 child: DropdownButtonFormField<String>(
                                   dropdownColor: gpPrimaryColor,
                                   decoration: const InputDecoration(
-                                      labelText: 'Terminal',
-                                      labelStyle: TextStyle(fontSize: 12),
-                                      border: OutlineInputBorder(),
-                                      contentPadding: EdgeInsets.symmetric(
-                                          vertical: 8, horizontal: 10)),
+                                    labelText: 'Terminal',
+                                    labelStyle: TextStyle(fontSize: 12),
+                                    border: OutlineInputBorder(),
+                                    contentPadding: EdgeInsets.symmetric(
+                                        vertical: 8, horizontal: 10),
+                                  ),
                                   value: _selectedTerminal,
-                                  items: terminalOptions.map((String value) {
+                                  items: allLocations.map((String value) {
                                     return DropdownMenuItem<String>(
                                       value: value,
                                       child: Text(value),
@@ -315,21 +337,24 @@ class _ShippingScreenState extends State<ShippingScreen> {
                                   onChanged: (newValue) {
                                     setState(() {
                                       _selectedTerminal = newValue!;
+                                      _updateDestinationOptions();
                                     });
                                   },
                                 ),
                               ),
                               const SizedBox(width: 10),
+                              // Destination Dropdown
                               Expanded(
                                 flex: 2,
                                 child: DropdownButtonFormField<String>(
                                   dropdownColor: gpPrimaryColor,
                                   decoration: const InputDecoration(
-                                      labelText: 'Destination',
-                                      labelStyle: TextStyle(fontSize: 12),
-                                      border: OutlineInputBorder(),
-                                      contentPadding: EdgeInsets.symmetric(
-                                          vertical: 8, horizontal: 10)),
+                                    labelText: 'Destination',
+                                    labelStyle: TextStyle(fontSize: 12),
+                                    border: OutlineInputBorder(),
+                                    contentPadding: EdgeInsets.symmetric(
+                                        vertical: 8, horizontal: 10),
+                                  ),
                                   value: _selectedDestination,
                                   items: destinationOptions.map((String value) {
                                     return DropdownMenuItem<String>(
@@ -344,7 +369,6 @@ class _ShippingScreenState extends State<ShippingScreen> {
                                   },
                                 ),
                               ),
-                              // Price TextField
                             ],
                           ),
                           const SizedBox(

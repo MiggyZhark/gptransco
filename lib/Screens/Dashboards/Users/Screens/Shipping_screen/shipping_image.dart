@@ -86,7 +86,7 @@ class _ShippingImageState extends State<ShippingImage> {
                 : null,
           ),
           child: _selectedImage == null
-              ? const Icon(Icons.add_a_photo, size: 50, color: Colors.grey)
+              ? const Icon(Icons.receipt, size: 50, color: Colors.grey)
               : null,
         ),
       ),
