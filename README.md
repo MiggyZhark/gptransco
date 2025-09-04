@@ -1,16 +1,30 @@
-# gptransco
+# 🔐 GPTransco Authentication UI/UX
 
-Application for Capstone
+This repository contains the **open-source UI and UX components** for authentication pages of **GPTransco**, a Flutter-based application developed as part of our **Capstone Project**.  
+The goal is to provide clean, reusable, and responsive authentication screens that can be integrated into any Flutter project.  
 
-## Getting Started
+## 🚀 Features
+- Modern and responsive UI for authentication  
+- Includes **Login, Signup, and Forgot Password** screens  
+- Built with **Flutter** for cross-platform compatibility  
+- Easy to customize and extend for other projects
 
-This project is a starting point for a Flutter application.
+  ## 🛠️ Getting Started
 
-A few resources to get you started if this is your first Flutter project:
+To run this project locally:
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+1. Clone the repository:
+   git clone https://github.com/MiggyZhark/gptransco
+   
+Navigate to the project folder:
+cd gptransco-auth-ui
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Get the dependencies:
+flutter pub get
+
+Run the app:
+flutter run
+
+📜 License
+
+This project is open-source and free to use for educational and development purposes.
